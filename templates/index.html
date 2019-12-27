@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}
+    Home
+{% endblock %}
+
+{% block body %}
+<div class="container">
+  <div class="title">
+    <h1 class="text-center">Student Barcode</h1>
+  </div>
+  <div class="form" style="width:50%; margin:auto">
+
+    <form action="{{ url_for('student_data') }}" method="post" enctype = "multipart/form-data">
+      <div class="input-group">
+        <div class="custom-file">
+            <input type="file" name="student_file" class="custom-file-input" required id="inputGroupFile01"
+              aria-describedby="inputGroupFileAddon01">
+            <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
+        </div>
+      </div>
+      <div class="input-group-prepend">
+        <input class="input-group-text" type="submit" id="inputGroupFileAddon01" value="Upload"/>
+      </div>
+    </form>
+  </div>
+
+  <div class="student">
+    <h3 class="text-center">Student</h3>
+    <div class="row">
+      <!-- <form action="" method="post">
+        <input class="input-group-text" type="submit" style="cursor: pointer;" name="generate" value="Generate Barcode .PNG">
+      </form> -->
+      <form action="{{ url_for('generate_svg') }}" method="post" style="margin-left:5px">
+        <input class="input-group-text" type="submit" style="cursor: pointer;" name="generate" value="Generate Barcode .SVG">
+      </form>
+    </div>
+    <table class="table">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Name</th>
+      <th scope="col">Code</th>
+      <th scope="col">Level</th>
+      <th scope="col">barcode</th>
+    </tr>
+  </thead>
+  <tbody>
+
+    {% for row in students %}
+    <tr>
+      <th scope="row">{{ row[0] }}</th>
+      <td>{{ row[1] }}</td>
+      <td>{{ row[2] }}</td>
+      <td>{{ row[3] }}</td>
+      <td>#</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+  </div>
+
+</div>
+
+
+{% endblock %}
