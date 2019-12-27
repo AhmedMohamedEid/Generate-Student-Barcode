@@ -23,6 +23,7 @@ db = sqlite3.connect('student.db', check_same_thread=False)
 def index():
     rows = db.execute("SELECT * FROM student").fetchall()
     print(rows)
+
     return render_template("index.html", students=rows)
 
 
@@ -111,6 +112,12 @@ def generate_svg():
             db.commit()
     return redirect(url_for("index"))
 
+
+@app.route("/delete_all", methods=["POST", "GET"])
+def delete_all():
+    if request.method == "POST":
+        db.execute("DELETE FROM student")
+    return redirect(url_for("index"))
 
 if __name__ == '__main__':
     app.run()
