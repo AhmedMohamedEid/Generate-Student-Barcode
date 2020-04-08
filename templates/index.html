@@ -6,7 +6,9 @@
 {% block body %}
 <div class="container">
   <div class="title">
-    <h1 class="text-center">Student Barcode</h1>
+    <h1 class="text-center">
+      <img class="icon" src="{{  url_for('static', filename='image/icon1.png') }}" width="100px" height="100px" title="Barcode Logo" alt="Barcode Logo">
+    </h1>
   </div>
   <div class="form" style="width:50%; margin:auto">
 
@@ -23,43 +25,140 @@
       </div>
     </form>
   </div>
+<div class="tabs">
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+    <li class="nav-item">
+      <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Home</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Majors</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">Contact</a>
+    </li>
+  </ul>
+  <div class="tab-content" id="myTabContent">
+    <!-- first tab  -->
+    <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+        <div class="student">
+          <h3 class="text-center">Student</h3>
+          <div class="row">
+            <form action="{{ url_for('delete_all') }}" method="post">
+              <button class="btn btn-danger btn-sm" type="submit" style="cursor: pointer;" name="delete_all"><i class="fas fa-trash-alt" ></i></button>
+            </form>
+            <form action="{{ url_for('generate_svg') }}" method="post" style="margin-left:5px">
+              <button class="btn btn-info btn-sm" type="submit" style="cursor: pointer;" name="generate"><i class="fas fa-barcode" ></i></button>
+              <!-- <input class="input-group-text" type="submit" style="cursor: pointer;" name="generate" value="Generate Barcode .SVG"> -->
+            </form>
+          </div>
+          <div class="display-barcode">
+            <div class="type-view">
+              <div class="pagination-info">
+                {{ pagination.info }}
+              </div>
+              <div class="toggle-view">
+                <button type="button" id="list_view" onclick="viewList()" class="btn btn-outline-dark btn-sm"><i class="fas fa-list-ul"></i></button>
+                <button type="button" id="card_view" onclick="viewCard()" class="btn btn-outline-dark btn-sm"><i class="fas fa-barcode"></i></button>
+              </div>
 
-  <div class="student">
-    <h3 class="text-center">Student</h3>
-    <div class="row">
-      <form action="{{ url_for('delete_all') }}" method="post">
-        <input class="btn btn-danger" type="submit" style="cursor: pointer;" name="generate" value="Delete All">
-      </form>
-      <form action="{{ url_for('generate_svg') }}" method="post" style="margin-left:5px">
-        <input class="input-group-text" type="submit" style="cursor: pointer;" name="generate" value="Generate Barcode .SVG">
-      </form>
+            </div>
+            <div class="list-view" id="list">
+
+
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col"><input type="checkbox" onClick="toggle(this)" style="height:1em;width: 1em;" name="selectall" value="0"></th>
+                    <th scope="col">#</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Code</th>
+                    <th scope="col">Level</th>
+                    <th scope="col">barcode</th>
+                  </tr>
+                </thead>
+                <tbody>
+
+                  {% for row in students %}
+                  <tr>
+                    <td><input type="checkbox" name="student" value="{{ row[0] }}" style="height: .9em;width: .9em;"></td>
+                    <th scope="row">{{ loop.index + pagination.skip }}</th>
+                    <td>{{ row[1] }}</td>
+                    <td>{{ row[2] }}</td>
+                    <td>{{ row[3] }}</td>
+                    {% if row[4] %}
+                    <td><img src="{{ url_for('static', filename=row[4]) }}" alt="{{ row[1] }}" style="height:34%" title="{{ row[2] }}-{{ row[1] }}"></td>
+                    {% else %}
+                    <td>-</td>
+                    {% endif %}
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+
+            <div class="card" id="card">
+              <div class="row">
+                {% for row in students %}
+                <div class="col-md-2">
+                  <div class="card" for="check_{{ row[2] }}" style="width: 11rem;position:relative;">
+
+                    <input type="checkbox" name="student_card_v" id="check_{{ row[2] }}" value="{{ row[0] }}" style="position:absolute; right:1px"/>
+                    {% if row[4] %}
+                    <img src="{{ url_for('static', filename=row[4]) }}" alt="{{ row[1] }}" class="card-img-top"  title="{{ row[2] }}-{{ row[1] }}">
+                    {% else %}
+
+                    {% endif %}
+                    <div class="card-body">
+                      <p class="card-text">{{ row[2] }} - {{ row[3] }}</p>
+                      <a href="#" class="btn btn-outline-primary btn-sm">Print</a>
+                    </div>
+                  </div>
+                </div>
+                {% endfor %}
+              </div>
+
+            </div>
+
+          </div>
+      <div class="pagination-bar" style="margin:0 40%">
+        {{ pagination.links }}
+      </div>
+
+      <!--
+          <div class="spinner-border m-5" role="status">
+            <span class="sr-only">Loading...</span>
+          </div>
+        </div> -->
+
+      <!--
+
+          <ul class="pagination justify-content-center">
+            <li class="page-item disabled">
+              <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+            </li>
+            <li class="page-item"><a class="page-link" href="#">1</a></li>
+            <li class="page-item"><a class="page-link" href="#">2</a></li>
+            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <li class="page-item">
+              <a class="page-link" href="#">Next</a>
+            </li>
+          </ul>
+        </nav> -->
+
+      </div>
     </div>
-    <table class="table">
-  <thead>
-    <tr>
-      <th scope="col">#</th>
-      <th scope="col">Name</th>
-      <th scope="col">Code</th>
-      <th scope="col">Level</th>
-      <th scope="col">barcode</th>
-    </tr>
-  </thead>
-  <tbody>
 
-    {% for row in students %}
-    <tr>
-      <th scope="row">{{ row[0] }}</th>
-      <td>{{ row[1] }}</td>
-      <td>{{ row[2] }}</td>
-      <td>{{ row[3] }}</td>
-      <td>#</td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
+    <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+      <h1>AHmed</h1>
+    </div>
+    <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
+      <h1>Mohamed</h1>
+    </div>
   </div>
 
 </div>
+
+
 
 
 {% endblock %}

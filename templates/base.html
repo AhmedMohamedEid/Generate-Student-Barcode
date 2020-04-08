@@ -4,8 +4,11 @@
     <meta charset="utf-8">
     <title>{% block title %}{% endblock %}</title>
 
-    <link rel="stylesheet" href="{{  url_for('static', filename='bootstrap.min.css') }}" >
-    <link rel="stylesheet" href="{{  url_for('static', filename='style.css') }}" >
+    <link rel="stylesheet" href="{{  url_for('static', filename='css/bootstrap.min.css') }}" >
+    <link rel="stylesheet" href="{{  url_for('static', filename='css/all.css') }}" >
+    <link rel="stylesheet" href="{{  url_for('static', filename='css/style.css') }}" >
+
+    <script defer src="{{ url_for('static', filename='js/all.min.js') }}" ></script>
 
   </head>
   <body>
@@ -13,8 +16,9 @@
 
   {% endblock %}
 
-    <script src="{{ url_for('static', filename='jquery-3.2.1.min.js') }}" ></script>
-    <script src="{{ url_for('static', filename='script.js') }}" ></script>
+    <script src="{{ url_for('static', filename='js/jquery-3.2.1.min.js') }}" ></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}" ></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}" ></script>
 
   </body>
 </html>
