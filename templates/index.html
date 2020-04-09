@@ -5,11 +5,28 @@
 
 {% block body %}
 <div class="container">
-  <div class="title">
-    <h1 class="text-center">
-      <img class="icon" src="{{  url_for('static', filename='image/icon1.png') }}" width="100px" height="100px" title="Barcode Logo" alt="Barcode Logo">
-    </h1>
-  </div>
+  <nav class="navbar navbar-expand-lg navbar-light">
+    <div class="title">
+      <h1 class="text-center">
+        <img class="icon" src="{{  url_for('static', filename='image/icon1.png') }}" width="100px" height="100px" title="Barcode Logo" alt="Barcode Logo">
+      </h1>
+    </div>
+
+    <div class="" id="navbarNavDropdown">
+      <ul class="navbar-nav justify-content-end">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            {{ session['user_name']|upper }}
+          </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+            <a class="dropdown-item" href="{{ url_for('logout')}}">Logout</a>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+  </nav>
+
   <div class="form" style="width:50%; margin:auto">
 
     <form action="{{ url_for('student_data') }}" method="post" enctype = "multipart/form-data">
@@ -28,7 +45,7 @@
 <div class="tabs">
     <ul class="nav nav-tabs" id="myTab" role="tablist">
     <li class="nav-item">
-      <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Home</a>
+      <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Student</a>
     </li>
     <li class="nav-item">
       <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Majors</a>
@@ -41,13 +58,12 @@
     <!-- first tab  -->
     <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
         <div class="student">
-          <h3 class="text-center">Student</h3>
           <div class="row">
             <form action="{{ url_for('delete_all') }}" method="post">
-              <button class="btn btn-danger btn-sm" type="submit" style="cursor: pointer;" name="delete_all"><i class="fas fa-trash-alt" ></i></button>
+              <button class="btn btn-danger btn-sm" title="Delete All" type="submit" style="cursor: pointer;" name="delete_all"><i class="fas fa-trash-alt" ></i></button>
             </form>
             <form action="{{ url_for('generate_svg') }}" method="post" style="margin-left:5px">
-              <button class="btn btn-info btn-sm" type="submit" style="cursor: pointer;" name="generate"><i class="fas fa-barcode" ></i></button>
+              <button class="btn btn-info btn-sm" title="Generate SVG Image" type="submit" style="cursor: pointer;" name="generate"><i class="fas fa-barcode" ></i></button>
               <!-- <input class="input-group-text" type="submit" style="cursor: pointer;" name="generate" value="Generate Barcode .SVG"> -->
             </form>
           </div>
