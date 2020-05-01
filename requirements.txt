@@ -1,2 +1,8 @@
+flask-login
 python-barcode
 flask-paginate
+psycopg2-binary
+flask-sqlalchemy
+Flask-Migrate
+Flask-Script
+flask-wtf
