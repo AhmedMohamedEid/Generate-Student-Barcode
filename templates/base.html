@@ -17,6 +17,8 @@
   <body>
     <div class="container d-md-flex align-items-stretch">
       <div id="content" class="p-4 p-md-4 pt-5">
+        {% if request.url_rule.endpoint != 'login' %}
+        {% if request.url_rule.endpoint != 'signup' %}
         <nav aria-label="breadcrumb">
           <ul class="nav">
 
@@ -35,10 +37,14 @@
             </div>
           </ul>
         </nav>
+        {% endif %}
+        {% endif %}
       {% block body %}
 
       {% endblock %}
       </div>
+      {% if request.url_rule.endpoint != 'login' %}
+      {% if request.url_rule.endpoint != 'signup' %}
 
       <nav id="sidebar">
 				<div class="p-4 pt-5">
@@ -84,6 +90,8 @@
 					</div>
 	      </div>
     	</nav>
+      {% endif %}
+      {% endif %}
 		</div>
 
     <script src="{{ url_for('static', filename='js/jquery-3.2.1.min.js') }}" ></script>
