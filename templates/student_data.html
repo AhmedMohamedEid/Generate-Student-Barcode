@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Settings
+{% endblock %}
+
+{% block body %}
+<!-- Page Content  -->
+
+<div class="p-4 form-title">
+  <h2 class="text-center">{{ student.name }}</h2>
+</div>
+
+<div class="row">
+  <div class="col-md-5">
+    {% if student.barcode_path %}
+    <img src="{{ url_for('static', filename=student.barcode_path ) }}" alt="{{ student.name }}" class="img-thumbnail" style="width:100%" title="{{ student.un_id }}-{{ student.name }}">
+    <a href="#" class="btn btn-info m-2" name="button" title="Print Barcode"><i class="fas fa-print"></i></a>
+    <a href="#" class="btn btn-info m-2" name="button" title="Print Barcode"><i class="fas fa-file-download"></i></a>
+
+    {% else %}
+    <img src="{{ url_for('static', filename='image/icon.png' ) }}" alt="Barcode not Generated" class="img-thumbnail">
+    <a href="#" class="btn btn-info m-2" name="button" title="Generate Barcode"><i class="fas fa-barcode" ></i></a>
+    {% endif %}
+
+
+  </div>
+  <div class="col-md-7">
+    <div class="card text-right" style="width: 100%;float:right;">
+      <div class="card-header">
+        بيانات الطالب
+      </div>
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item"><strong>الكود الجامعي :</strong> {{ student.un_id }}</li>
+        <li class="list-group-item"><strong>الشعبة :</strong> {{ major.name }}</li>
+        <li class="list-group-item"><strong>الفرقة</strong> {{ level.name }}</li>
+        <li class="list-group-item"><strong>المواد الدراسية :</strong> </li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

@@ -4,177 +4,47 @@
 {% endblock %}
 
 {% block body %}
-<div class="container">
-  <nav class="navbar navbar-expand-lg navbar-light">
-    <div class="title">
-      <h1 class="text-center">
-        <img class="icon" src="{{  url_for('static', filename='image/icon1.png') }}" width="100px" height="100px" title="Barcode Logo" alt="Barcode Logo">
-      </h1>
-    </div>
-
-    <div class="" id="navbarNavDropdown">
-      <ul class="navbar-nav justify-content-end">
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            {{ session['user_name']|upper }}
-          </a>
-          <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-            <a class="dropdown-item" href="{{ url_for('logout')}}">Logout</a>
-          </div>
-        </li>
-      </ul>
-    </div>
-
-  </nav>
 
   <div class="form" style="width:50%; margin:auto">
 
-    <form action="{{ url_for('student_data') }}" method="post" enctype = "multipart/form-data">
-      <div class="input-group">
+    <div class="p-4 form-title">
+      <h2 class="text-center">إدخال الطلاب</h2>
+    </div>
+    <form action="{{ url_for('student_upload_data') }}" style="direction: rtl;" method="post" enctype = "multipart/form-data">
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <label class="input-group-text" for="inputGroupSelect01">الشعبة</label>
+        </div>
+        <select class="custom-select" name="major" id="inputGroupSelect01">
+          <option selected>...</option>
+          {% for major in majors %}
+          <option value="{{ major.id }}">{{ major.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <label class="input-group-text" for="inputGroupSelect02">الفرقة</label>
+        </div>
+        <select class="custom-select" name="level" id="inputGroupSelect02">
+          <option selected>...</option>
+          {% for level in levels %}
+          <option value="{{ level.id }}">{{ level.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="input-group mb-3">
         <div class="custom-file">
-            <input type="file" name="student_file" class="custom-file-input" required id="inputGroupFile01"
-              aria-describedby="inputGroupFileAddon01">
-            <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
+          <input type="file" name="student_file" class="custom-file-input" id="inputGroupFile02">
+          <label class="custom-file-label" for="inputGroupFile02" aria-describedby="inputGroupFileAddon02">اختر الملف</label>
         </div>
       </div>
+
       <div class="input-group-prepend">
-        <input class="input-group-text" type="submit" id="inputGroupFileAddon01" value="Upload"/>
+        <input class="btn btn-primary " type="submit" id="inputGroupFileAddon01" value="تحميل"/>
       </div>
     </form>
   </div>
-<div class="tabs">
-    <ul class="nav nav-tabs" id="myTab" role="tablist">
-    <li class="nav-item">
-      <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Student</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Majors</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">Contact</a>
-    </li>
-  </ul>
-  <div class="tab-content" id="myTabContent">
-    <!-- first tab  -->
-    <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
-        <div class="student">
-          <div class="row">
-            <form action="{{ url_for('delete_all') }}" method="post">
-              <button class="btn btn-danger btn-sm" title="Delete All" type="submit" style="cursor: pointer;" name="delete_all"><i class="fas fa-trash-alt" ></i></button>
-            </form>
-            <form action="{{ url_for('generate_svg') }}" method="post" style="margin-left:5px">
-              <button class="btn btn-info btn-sm" title="Generate SVG Image" type="submit" style="cursor: pointer;" name="generate"><i class="fas fa-barcode" ></i></button>
-              <!-- <input class="input-group-text" type="submit" style="cursor: pointer;" name="generate" value="Generate Barcode .SVG"> -->
-            </form>
-          </div>
-          <div class="display-barcode">
-            <div class="type-view">
-              <div class="pagination-info">
-                {{ pagination.info }}
-              </div>
-              <div class="toggle-view">
-                <button type="button" id="list_view" onclick="viewList()" class="btn btn-outline-dark btn-sm"><i class="fas fa-list-ul"></i></button>
-                <button type="button" id="card_view" onclick="viewCard()" class="btn btn-outline-dark btn-sm"><i class="fas fa-barcode"></i></button>
-              </div>
-
-            </div>
-            <div class="list-view" id="list">
-
-
-              <table class="table">
-                <thead>
-                  <tr>
-                    <th scope="col"><input type="checkbox" onClick="toggle(this)" style="height:1em;width: 1em;" name="selectall" value="0"></th>
-                    <th scope="col">#</th>
-                    <th scope="col">Name</th>
-                    <th scope="col">Code</th>
-                    <th scope="col">Level</th>
-                    <th scope="col">barcode</th>
-                  </tr>
-                </thead>
-                <tbody>
-
-                  {% for row in students %}
-                  <tr>
-                    <td><input type="checkbox" name="student" value="{{ row[0] }}" style="height: .9em;width: .9em;"></td>
-                    <th scope="row">{{ loop.index + pagination.skip }}</th>
-                    <td>{{ row[1] }}</td>
-                    <td>{{ row[2] }}</td>
-                    <td>{{ row[3] }}</td>
-                    {% if row[4] %}
-                    <td><img src="{{ url_for('static', filename=row[4]) }}" alt="{{ row[1] }}" style="height:34%" title="{{ row[2] }}-{{ row[1] }}"></td>
-                    {% else %}
-                    <td>-</td>
-                    {% endif %}
-                  </tr>
-                  {% endfor %}
-                </tbody>
-              </table>
-            </div>
-
-            <div class="card" id="card">
-              <div class="row">
-                {% for row in students %}
-                <div class="col-md-2">
-                  <div class="card" for="check_{{ row[2] }}" style="width: 11rem;position:relative;">
-
-                    <input type="checkbox" name="student_card_v" id="check_{{ row[2] }}" value="{{ row[0] }}" style="position:absolute; right:1px"/>
-                    {% if row[4] %}
-                    <img src="{{ url_for('static', filename=row[4]) }}" alt="{{ row[1] }}" class="card-img-top"  title="{{ row[2] }}-{{ row[1] }}">
-                    {% else %}
-
-                    {% endif %}
-                    <div class="card-body">
-                      <p class="card-text">{{ row[2] }} - {{ row[3] }}</p>
-                      <a href="#" class="btn btn-outline-primary btn-sm">Print</a>
-                    </div>
-                  </div>
-                </div>
-                {% endfor %}
-              </div>
-
-            </div>
-
-          </div>
-      <div class="pagination-bar" style="margin:0 40%">
-        {{ pagination.links }}
-      </div>
-
-      <!--
-          <div class="spinner-border m-5" role="status">
-            <span class="sr-only">Loading...</span>
-          </div>
-        </div> -->
-
-      <!--
-
-          <ul class="pagination justify-content-center">
-            <li class="page-item disabled">
-              <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
-            </li>
-            <li class="page-item"><a class="page-link" href="#">1</a></li>
-            <li class="page-item"><a class="page-link" href="#">2</a></li>
-            <li class="page-item"><a class="page-link" href="#">3</a></li>
-            <li class="page-item">
-              <a class="page-link" href="#">Next</a>
-            </li>
-          </ul>
-        </nav> -->
-
-      </div>
-    </div>
-
-    <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-      <h1>AHmed</h1>
-    </div>
-    <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
-      <h1>Mohamed</h1>
-    </div>
-  </div>
-
-</div>
-
-
-
 
 {% endblock %}

@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Settings
+{% endblock %}
+
+{% block body %}
+<!-- Page Content  -->
+
+    <div class="group">
+    <h3 class="mb-4">Majors</h3>
+
+    <form action="{{ url_for('major') }}" method="POST">
+      <div class="form-row align-items-center">
+        <div class="col-auto">
+          <label class="sr-only" for="inlineFormInput">Name</label>
+          <input type="text" class="form-control mb-2" id="inlineFormInput" name="name" placeholder="....">
+        </div>
+        <div class="col-auto">
+          <div class="input-group mb-2">
+            <select class="form-control" multiple name="levels" id="inlineFormInputGroup">
+                {% for row in levels %}
+                <option value="{{ row.id }}">{{ row.name }}</option>
+                {% endfor %}
+            </select>
+
+
+          </div>
+        </div>
+        <div class="col-auto">
+          <button type="submit" class="btn btn-primary btn-sm mb-2">Add</button>
+        </div>
+      </div>
+    </form>
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th scope="col"><input type="checkbox" onClick="toggle(this)" style="height:1em;width: 1em;" name="selectall" value="0"></th>
+          <th scope="col">#</th>
+          <th scope="col">Name</th>
+          <th scope="col">levels</th>
+          <th scope="col">Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in majors %}
+        <tr>
+          <td><input type="checkbox" name="student" value="" style="height: .9em;width: .9em;"></td>
+          <th scope="row">{{ row.id }}</th>
+          <td>{{ row.name }}</td>
+          <td></td>
+          <td>{{ row.notes }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+
+    </div>
+
+    <div class="group">
+    <h3 class="mb-4">Levels</h3>
+
+    <form action="{{ url_for('level') }}" method="post">
+      <div class="form-row align-items-center">
+        <div class="col-auto">
+          <label class="sr-only" for="inlineFormInput">Name</label>
+          <input type="text" class="form-control mb-2" id="inlineFormInput" name="name" placeholder="Name">
+        </div>
+        <div class="col-auto">
+          <div class="input-group mb-2">
+            <input type="text" class="form-control" id="inlineFormInputGroup" name="notes" placeholder="Notes">
+          </div>
+        </div>
+        <div class="col-auto">
+          <button type="submit" class="btn btn-primary btn-sm mb-2">Add</button>
+        </div>
+      </div>
+    </form>
+
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th scope="col"><input type="checkbox" onClick="toggle(this)" style="height:1em;width: 1em;" name="selectall" value="0"></th>
+          <th scope="col">#</th>
+          <th scope="col">Name</th>
+          <th scope="col">Notes</th>
+          <!-- <th scope="col"></th> -->
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in levels %}
+        <tr>
+          <td><input type="checkbox" name="student" value="" style="height: .9em;width: .9em;"></td>
+          <th scope="row">{{ row.id }}</th>
+          <td>{{ row.name }}</td>
+          <td>{{ row.notes }}</td>
+          <!-- <td>@mdo</td> -->
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+
+    </div>
+
+{% endblock%}

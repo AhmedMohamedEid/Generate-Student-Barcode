@@ -1,23 +1,95 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
   <head>
-    <meta charset="utf-8">
     <title>{% block title %}{% endblock %}</title>
-
-    <link rel="stylesheet" href="{{  url_for('static', filename='css/bootstrap.min.css') }}" >
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,800,900" rel="stylesheet">
+    <link rel="stylesheet" href="{{  url_for('static', filename='css/bootstrap.css') }}" >
+    <!-- <link rel="stylesheet" href="{{  url_for('static', filename='css/mdb.min.css') }}" > -->
     <link rel="stylesheet" href="{{  url_for('static', filename='css/all.css') }}" >
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="{{  url_for('static', filename='css/style.css') }}" >
 
     <script defer src="{{ url_for('static', filename='js/all.min.js') }}" ></script>
 
   </head>
   <body>
-  {% block body %}
+    <div class="container d-md-flex align-items-stretch">
+      <div id="content" class="p-4 p-md-4 pt-5">
+        <nav aria-label="breadcrumb">
+          <ul class="nav">
 
-  {% endblock %}
+            <div class="" id="navbarNavDropdown">
+              <ul class="navbar-nav justify-content-end">
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    {{ session['user_name']|upper }}
+                  </a>
+                  <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                    <a class="dropdown-item" href="{{ url_for('setting')}}">ألاعدادات</a>
+                    <a class="dropdown-item" href="{{ url_for('logout')}}">تسجل خروج</a>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </ul>
+        </nav>
+      {% block body %}
+
+      {% endblock %}
+      </div>
+
+      <nav id="sidebar">
+				<div class="p-4 pt-5">
+          <div class="text-center">
+            <img class="icon" src="{{  url_for('static', filename='image/icon1.png') }}" width="100px" height="100px" title="Barcode Logo" alt="Barcode Logo">
+          </div>
+					<!-- <h5>Categories</h5> -->
+	        <ul class="list-unstyled components mb-5">
+            <li>
+	            <a href="{{ url_for('index') }}" aria-expanded="false" >الصفحة الرئيسية</a>
+	          </li>
+            <li>
+	            <a href="#pageSubmenu1" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">ألاعدادات</a>
+	            <ul class="collapse list-unstyled" id="pageSubmenu1">
+                <li><a href="{{ url_for('all_student') }}"><span class="fa fa-chevron-right mr-2"></span> الطلاب</a></li>
+                <li><a href="{{ url_for('setting') }}"><span class="fa fa-chevron-right mr-2"></span> Settings</a></li>
+
+	            </ul>
+	          </li>
+
+	        </ul>
+					<div class="mb-5">
+						<h5>Tag Cloud</h5>
+            <div class="tagcloud">
+              <a href="#" class="tag-cloud-link">dish</a>
+              <a href="#" class="tag-cloud-link">menu</a>
+              <a href="#" class="tag-cloud-link">food</a>
+              <a href="#" class="tag-cloud-link">sweet</a>
+              <a href="#" class="tag-cloud-link">tasty</a>
+              <a href="#" class="tag-cloud-link">delicious</a>
+              <a href="#" class="tag-cloud-link">desserts</a>
+              <a href="#" class="tag-cloud-link">drinks</a>
+            </div>
+					</div>
+					<div class="mb-5">
+	        	<h5>Newsletter</h5>
+						<form action="#" class="subscribe-form">
+	            <div class="form-group d-flex">
+	            	<div class="icon"><span class="icon-paper-plane"></span></div>
+	              <input type="text" class="form-control" placeholder="Enter Email Address">
+	            </div>
+	          </form>
+					</div>
+	      </div>
+    	</nav>
+		</div>
 
     <script src="{{ url_for('static', filename='js/jquery-3.2.1.min.js') }}" ></script>
+    <script src="{{ url_for('static', filename='js/popper.js') }}" ></script>
     <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}" ></script>
+    <!-- <script src="{{ url_for('static', filename='js/mdb.min.js') }}" ></script> -->
     <script src="{{ url_for('static', filename='js/script.js') }}" ></script>
 
   </body>

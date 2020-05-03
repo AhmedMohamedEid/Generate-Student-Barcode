@@ -24,9 +24,42 @@ $(document).ready(function(){
     e.preventDefault();
     $(this).tab('show');
   });
+
+  $(".table-control #filter_button").click(function(){
+    $("#filter_form").fadeToggle();
+  });
+
 });
+
+function toggel_filter() {
+  var x = document.getElementById("filter_button");
+  if (x.style.display === "none") {
+    x.style.display = "block";
+  } else {
+    x.style.display = "none";
+  }
+}
 
 // $('#myTab a[href="#profile"]').tab('show') // Select tab by name
 // $('#myTab li:first-child a').tab('show') // Select first tab
 // $('#myTab li:last-child a').tab('show') // Select last tab
 // $('#myTab li:nth-child(3) a').tab('show') // Select third tab
+
+
+
+
+(function($) {
+
+	"use strict";
+
+	var fullHeight = function() {
+
+		$('.js-fullheight').css('height', $(window).height());
+		$(window).resize(function(){
+			$('.js-fullheight').css('height', $(window).height());
+		});
+
+	};
+	fullHeight();
+
+})(jQuery);
