@@ -9,11 +9,63 @@
 
 <div>
   <div class="student">
-    <div class="p-4 form-title">
+    <div class="pt-4 pb-3 form-title">
       <h2 class="text-center">الطلاب</h2>
     </div>
+
+    <div class="s009 mb-3">
+      <form >
+        <div class="inner-form">
+          <div class="basic-search">
+            <div class="input-field">
+              <input id="search" type="text" placeholder="بحث .." />
+              <div class="icon-wrap">
+                <svg class="svg-inline--fa fa-search fa-w-16" fill="#ccc" aria-hidden="true" data-prefix="fas" data-icon="search" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                  <path d="M505 442.7L405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c48.3 0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9 0l28.3-28.3c9.4-9.4 9.4-24.6.1-34zM208 336c-70.7 0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7 0 128 57.2 128 128 0 70.7-57.2 128-128 128z"></path>
+                </svg>
+              </div>
+              <div class="icon-fiter p-3">
+                <div id="filter_button">
+                  <i class="fas fa-filter fa-sm"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="advance-search" id="filter_form">
+            <span class="desc text-right">بحث متقدم</span>
+            <div class="row">
+              <div class="col-md-6 form-inline">
+                <div class="input-select">
+                  <!-- <label for="selectboxnum1"></label> -->
+                  <select data-trigger="" class="custom-select my-1 mr-sm-2" id="selectboxnum1" name="choices-single-defaul">
+                    <option placeholder="الشعبة" value="0">الشعبه</option>
+                    {% for row in majors  %}
+                    <option value="{{ row.id }}">{{ row.name }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-6 form-inline">
+                <div class="input-select">
+                  <select data-trigger="" class="custom-select my-1 mr-sm-2" name="choices-single-defaul">
+                    <option placeholder="" value="">الفرقة</option>
+                    {% for row in levels %}
+                    <option value="{{ row.id }}">{{ row.name }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+      </form>
+    </div>
+
+
     <div class="row">
-      <div class="table-control m-2" style="position:relative;display:-webkit-inline-box;">
+      <!-- <div class="table-control m-2" style="position:relative;display:-webkit-inline-box;">
         <div>
           <button type="button" id="filter_button"  class="btn btn-light" name="button"><i class="fas fa-filter fa-sm"></i> Filter</button>
 
@@ -51,15 +103,15 @@
         </div>
 
 
-      </div>
+      </div> -->
 
-      <form action="{{ url_for('delete_all') }}" method="post">
+      <!-- <form action="{{ url_for('delete_all') }}" method="post">
         <button class="btn btn-danger btn-sm" title="Delete All" type="submit" style="cursor: pointer;" name="delete_all"><i class="fas fa-trash-alt" ></i></button>
       </form>
       <form action="{{ url_for('generate_svg') }}" method="post" style="margin-left:5px">
         <button class="btn btn-info btn-sm" title="Generate SVG Image" type="submit" style="cursor: pointer;" name="generate"><i class="fas fa-barcode" ></i></button>
-        <!-- <input class="input-group-text" type="submit" style="cursor: pointer;" name="generate" value="Generate Barcode .SVG"> -->
-      </form>
+
+      </form> -->
 
     </div>
     <div class="display-barcode">
@@ -67,7 +119,7 @@
       <div class="list-view" id="list">
 
 
-        <table class="table text-right" style="direction:rtl;">
+        <table class="table text-right bg-white" style="direction:rtl;">
           <thead>
             <tr>
               <th scope="col"><input type="checkbox" onClick="toggle(this)" style="height:1em;width: 1em;" name="selectall" value="0"></th>
@@ -82,21 +134,30 @@
           </thead>
           <tbody>
 
-            {% for row in students %}
+            {% for row in rows.students %}
 
             <tr>
               <td><input type="checkbox" name="student" value="{{ row.id }}" style="height: .9em;width: .9em;"></td>
               <th scope="row">{{ loop.index + pagination.skip }}</th>
               <td>{{ row.un_id }}</td>
               <td><a href="{{ url_for('student', id=row.id) }}">{{ row.name }}</a></td>
-              <td>{{ row.major_id }}</td>
-              <td>{{ row.level_id }}</td>
+              {% for x in rows.data %}
+                {% if x.student_id == row.id %}
+                  <td>{{ x.major }}</td>
+                  <td>{{ x.level }}</td>
+                {% endif %}
+              {% endfor %}
               {% if row.barcode_path %}
               <td><img src="{{ url_for('static', filename=row.barcode_path) }}" alt="{{ row.name }}" style="height:34%" title="{{ row.un_id }}-{{ row.name }}"></td>
               {% else %}
               <td>-</td>
               {% endif %}
-              <td></td>
+              <td>
+
+                <a href="{{ url_for('generate_word_file', id=row.id) }}" class="btn btn-light text-info btn-sm" title="Generate Word File for student data." type="submit" style="cursor: pointer;" name="delete_all"><i class="fas fa-file-word"></i></a>
+                <a href="{{ url_for('generate_word_file', id=row.id) }}" class="btn btn-light text-danger btn-sm" title="Generate PDF File for student data." type="submit" style="cursor: pointer;" name="delete_all"><i class="fas fa-file-pdf"></i></a>
+                <a href="#"class="btn btn-light text-success btn-sm"  download><span><i class="fas fa-image"></i></span></a>
+              </td>
             </tr>
             {% endfor %}
           </tbody>

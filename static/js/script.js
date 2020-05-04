@@ -25,20 +25,25 @@ $(document).ready(function(){
     $(this).tab('show');
   });
 
-  $(".table-control #filter_button").click(function(){
+  $(".basic-search #filter_button").click(function(){
     $("#filter_form").fadeToggle();
   });
 
-});
+  $("#show_nav_toggel").click(function(){
+    $("#sidebar").fadeToggle();
+  });
 
-function toggel_filter() {
-  var x = document.getElementById("filter_button");
-  if (x.style.display === "none") {
-    x.style.display = "block";
-  } else {
-    x.style.display = "none";
-  }
-}
+
+});
+//
+// function toggel_filter() {
+//   var x = document.getElementById("filter_button");
+//   if (x.style.display === "none") {
+//     x.style.display = "block";
+//   } else {
+//     x.style.display = "none";
+//   }
+// }
 
 // $('#myTab a[href="#profile"]').tab('show') // Select tab by name
 // $('#myTab li:first-child a').tab('show') // Select first tab
@@ -63,3 +68,23 @@ function toggel_filter() {
 	fullHeight();
 
 })(jQuery);
+
+
+
+const customSelects = document.querySelectorAll("select");
+const deleteBtn = document.getElementById('delete')
+const choices = new Choices('select',
+{
+  searchEnabled: false,
+  itemSelectText: '',
+  removeItemButton: true,
+});
+deleteBtn.addEventListener("click", function(e)
+{
+  e.preventDefault()
+  const deleteAll = document.querySelectorAll('.choices__button')
+  for (let i = 0; i < deleteAll.length; i++)
+  {
+    deleteAll[i].click();
+  }
+});

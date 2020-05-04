@@ -2,7 +2,7 @@
 import csv
 import os
 
-from flask import Flask, session,render_template,redirect, request, url_for
+from flask import Flask, session,send_file,render_template,redirect, request, url_for
 from flask_session import Session
 from flask_login import LoginManager, UserMixin, login_required, login_user, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -23,7 +23,12 @@ from models import Users,Students, Levels, Majors, Subjects
 # from wtforms import StringField
 # from wtforms.validators import DataRequired
 
-#
+# Import Python Docx to Generate Word File
+from docx import Document
+from docx.shared import Inches
+
+document = Document()
+
 from flask import Blueprint
 from flask_paginate import Pagination, get_page_parameter, get_page_args
 #
@@ -132,7 +137,7 @@ def login():
         password = request.form.get("password")
         hash_password = generate_password_hash(password)
         result = Users.query.filter_by(email=email).first()
-        print(result.name)
+        # print(result.name)
         #
         if result:
             if check_password_hash(result.password, password):
@@ -312,12 +317,28 @@ def all_student():
     majors =  Majors.query.all()
     levels =  Levels.query.all()
     page = request.args.get(get_page_parameter(), type=int, default=1)
-    print(page)
+    # print(page)
     rows = Students.query.all()
+    rowss = {
+        "students":rows,
+    }
+    major_level_dec = []
+    for row in rows:
+        # print(row.major_id.)
+        major =  Majors.query.get(row.major_id)
+        level =  Levels.query.get(row.level_id)
+        major_level_dec.append({
+        "student_id": row.id,
+        "major":major.name,
+        "level": level.name
+        })
+    rowss["data"] = major_level_dec
+    # print("================",rowss)
+        # print(major_level_dec)
     pagination = Pagination(page=page, css_framework="bootstrap4",total=len(rows), record_name='rows')
-    print(pagination)
+    # print(pagination)
 
-    return render_template("student.html", pagination=pagination ,students=rows,majors=majors,levels=levels )
+    return render_template("student.html", pagination=pagination ,rows=rowss,major_level=major_level_dec,majors=majors,levels=levels )
 
 # @app.route('/user/<username>')
 # def profile(username):
@@ -335,6 +356,45 @@ def student(id):
 
     return render_template("student_data.html",student=row,major=major_id,level=level_id )
 
+
+# Generate Word File
+from docx.enum.text import WD_ALIGN_PARAGRAPH
+from docx.enum.table import WD_TABLE_DIRECTION
+from docx.enum.text import WD_ALIGN_PARAGRAPH
+
+
+@login_required
+@app.route("/generate_word_file/<int:id>")
+def generate_word_file(id):
+    # style.paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.RIGHT
+    row = Students.query.get(id)
+    major_id =  Majors.query.get(row.major_id)
+    level_id =  Levels.query.get(row.level_id)
+
+    head_title = document.add_heading(row.name, 0)
+    head_title.alignment = WD_ALIGN_PARAGRAPH.CENTER
+
+
+    # document.add_heading('Heading, level 1', level=1)
+    nu_id = document.add_paragraph('الكود الجامعي : {}'.format(row.un_id))
+    nu_id.alignment = WD_ALIGN_PARAGRAPH.RIGHT
+    major = document.add_paragraph('الشعبة : {}'.format(major_id.name))
+    major.alignment = WD_ALIGN_PARAGRAPH.RIGHT
+    level = document.add_paragraph('الفرقة : {}'.format(level_id.name))
+    level.alignment = WD_ALIGN_PARAGRAPH.RIGHT
+    subjects = document.add_paragraph('المواد الدراسية : ')
+    subjects.alignment = WD_ALIGN_PARAGRAPH.RIGHT
+
+    document.add_picture('icon.png', width=Inches(1.25))
+    #
+    # table = document.add_table(row =3, cols= 3)
+    # table.direction = WD_TABLE_DIRECTION.RTL
+
+    document.add_page_break()
+    path = document.save('demo-{}.docx'.format(row.un_id))
+    print(path)
+    return redirect(url_for('all_student'))
+    # return send_file(path, as_attachment=True, attachment_filename="demo.docx")
 
 #
 # @app.route("/generate_png", methods=["GET", "POST"])

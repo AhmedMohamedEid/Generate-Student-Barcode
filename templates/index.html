@@ -15,7 +15,7 @@
         <div class="input-group-prepend">
           <label class="input-group-text" for="inputGroupSelect01">الشعبة</label>
         </div>
-        <select class="custom-select" name="major" id="inputGroupSelect01">
+        <select class="custom-select" name="major" required id="inputGroupSelect01">
           <option selected>...</option>
           {% for major in majors %}
           <option value="{{ major.id }}">{{ major.name }}</option>
@@ -26,7 +26,7 @@
         <div class="input-group-prepend">
           <label class="input-group-text" for="inputGroupSelect02">الفرقة</label>
         </div>
-        <select class="custom-select" name="level" id="inputGroupSelect02">
+        <select class="custom-select" name="level" required id="inputGroupSelect02">
           <option selected>...</option>
           {% for level in levels %}
           <option value="{{ level.id }}">{{ level.name }}</option>
@@ -36,7 +36,7 @@
 
       <div class="input-group mb-3">
         <div class="custom-file">
-          <input type="file" name="student_file" class="custom-file-input" id="inputGroupFile02">
+          <input type="file" name="student_file" class="custom-file-input" required id="inputGroupFile02">
           <label class="custom-file-label" for="inputGroupFile02" aria-describedby="inputGroupFileAddon02">اختر الملف</label>
         </div>
       </div>

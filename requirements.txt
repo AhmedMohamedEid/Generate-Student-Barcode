@@ -6,3 +6,4 @@ flask-sqlalchemy
 Flask-Migrate
 Flask-Script
 flask-wtf
+python-docx

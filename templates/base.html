@@ -12,9 +12,9 @@
     <link rel="stylesheet" href="{{  url_for('static', filename='css/style.css') }}" >
 
     <script defer src="{{ url_for('static', filename='js/all.min.js') }}" ></script>
-
+    <link href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@400;500;600;700&display=swap" rel="stylesheet">
   </head>
-  <body>
+  <body class="  text-dark">
     <div class="container d-md-flex align-items-stretch">
       <div id="content" class="p-4 p-md-4 pt-5">
         {% if request.url_rule.endpoint != 'login' %}
@@ -42,12 +42,19 @@
       {% block body %}
 
       {% endblock %}
+        <div class="hide-nav">
+          <span class="text-dark"><button type="button" class="btn btn-link btn-sm" id="show_nav_toggel" name="button">Hide/show</button>
+          </span>
+        </div>
+
       </div>
       {% if request.url_rule.endpoint != 'login' %}
       {% if request.url_rule.endpoint != 'signup' %}
 
       <nav id="sidebar">
 				<div class="p-4 pt-5">
+
+
           <div class="text-center">
             <img class="icon" src="{{  url_for('static', filename='image/icon1.png') }}" width="100px" height="100px" title="Barcode Logo" alt="Barcode Logo">
           </div>
@@ -57,10 +64,13 @@
 	            <a href="{{ url_for('index') }}" aria-expanded="false" >الصفحة الرئيسية</a>
 	          </li>
             <li>
-	            <a href="#pageSubmenu1" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">ألاعدادات</a>
+	            <a href="{{ url_for('all_student') }}" aria-expanded="false" >الطـلاب</a>
+	          </li>
+            <li>
+	            <a href="#pageSubmenu1" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">الاعدادات</a>
 	            <ul class="collapse list-unstyled" id="pageSubmenu1">
-                <li><a href="{{ url_for('all_student') }}"><span class="fa fa-chevron-right mr-2"></span> الطلاب</a></li>
-                <li><a href="{{ url_for('setting') }}"><span class="fa fa-chevron-right mr-2"></span> Settings</a></li>
+                <li><a href="{{ url_for('all_student') }}">الطلاب<span class="fa fa-chevron-left ml-2"></span></a></li>
+                <li><a href="{{ url_for('setting') }}">الاعدادات<span class="fa fa-chevron-left ml-2"></span></a></li>
 
 	            </ul>
 	          </li>
@@ -97,7 +107,7 @@
     <script src="{{ url_for('static', filename='js/jquery-3.2.1.min.js') }}" ></script>
     <script src="{{ url_for('static', filename='js/popper.js') }}" ></script>
     <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}" ></script>
-    <!-- <script src="{{ url_for('static', filename='js/mdb.min.js') }}" ></script> -->
+    <!-- <script src="{{ url_for('static', filename='js/extention/choices.js') }}" ></script> -->
     <script src="{{ url_for('static', filename='js/script.js') }}" ></script>
 
   </body>
