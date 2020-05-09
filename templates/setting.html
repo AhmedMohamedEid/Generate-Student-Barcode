@@ -8,7 +8,7 @@
 <!-- Page Content  -->
 
     <div class="group">
-    <h3 class="mb-4">Majors</h3>
+    <h3 class="mb-4 text-right">الشعب</h3>
 
     <form action="{{ url_for('major') }}" method="POST">
       <div class="form-row align-items-center">
@@ -37,9 +37,9 @@
         <tr>
           <th scope="col"><input type="checkbox" onClick="toggle(this)" style="height:1em;width: 1em;" name="selectall" value="0"></th>
           <th scope="col">#</th>
-          <th scope="col">Name</th>
-          <th scope="col">levels</th>
-          <th scope="col">Notes</th>
+          <th scope="col">الاسم</th>
+          <th scope="col">الفرق</th>
+          <th scope="col">ملاحظات</th>
         </tr>
       </thead>
       <tbody>
@@ -59,32 +59,54 @@
     </div>
 
     <div class="group">
-    <h3 class="mb-4">Levels</h3>
+    <h3 class="mb-4 text-right">الفرق</h3>
 
-    <form action="{{ url_for('level') }}" method="post">
-      <div class="form-row align-items-center">
-        <div class="col-auto">
-          <label class="sr-only" for="inlineFormInput">Name</label>
-          <input type="text" class="form-control mb-2" id="inlineFormInput" name="name" placeholder="Name">
-        </div>
-        <div class="col-auto">
-          <div class="input-group mb-2">
-            <input type="text" class="form-control" id="inlineFormInputGroup" name="notes" placeholder="Notes">
+    {% if not levels %}
+      <form action="{{ url_for('level') }}" method="post">
+        <div class="form-row align-items-center">
+          <div class="col-auto">
+            <label class="sr-only" for="inlineFormInput">Name</label>
+            <input type="text" class="form-control mb-2" id="inlineFormInput" name="name" placeholder="Name">
+          </div>
+          <div class="col-auto">
+            <div class="input-group mb-2">
+              <input type="text" class="form-control" id="inlineFormInputGroup" name="notes" placeholder="Notes">
+            </div>
+          </div>
+          <div class="col-auto">
+            <button type="submit" class="btn btn-primary btn-sm mb-2">Add</button>
           </div>
         </div>
-        <div class="col-auto">
-          <button type="submit" class="btn btn-primary btn-sm mb-2">Add</button>
+      </form>
+      {% else %}
+
+      <button class="btn btn-info btn-sm" onclick="document.getElementById('id01').style.display='block'"><i class="fa fa-plus"></i></button>
+
+        <div id="id01" class="modal">
+          <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close Modal">&times;</span>
+          <form class="modal-content" action="#">
+            <div class="container">
+              <h1>Delete Account</h1>
+              <p>Are you sure you want to delete your account?</p>
+
+              <div class="clearfix">
+                <button type="button" class="cancelbtn">Cancel</button>
+                <button type="button" class="deletebtn">Delete</button>
+              </div>
+            </div>
+          </form>
         </div>
-      </div>
-    </form>
+
+
+
 
     <table class="table table-hover">
       <thead>
         <tr>
           <th scope="col"><input type="checkbox" onClick="toggle(this)" style="height:1em;width: 1em;" name="selectall" value="0"></th>
           <th scope="col">#</th>
-          <th scope="col">Name</th>
-          <th scope="col">Notes</th>
+          <th scope="col">الاسم</th>
+          <th scope="col">ملاحظات</th>
           <!-- <th scope="col"></th> -->
         </tr>
       </thead>
@@ -101,7 +123,7 @@
       </tbody>
     </table>
 
-
+    {% endif %}
     </div>
 
 {% endblock%}

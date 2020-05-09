@@ -2,7 +2,7 @@
 import csv
 import os
 
-from flask import Flask, session,send_file,render_template,redirect, request, url_for
+from flask import Flask, session,send_file,render_template,redirect, request, url_for,jsonify, Response
 from flask_session import Session
 from flask_login import LoginManager, UserMixin, login_required, login_user, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -13,7 +13,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import scoped_session, sessionmaker
 from werkzeug import secure_filename
 import time
-
+import json
 import barcode, random
 from barcode.writer import ImageWriter
 
@@ -355,6 +355,88 @@ def student(id):
     level_id =  Levels.query.get(row.level_id)
 
     return render_template("student_data.html",student=row,major=major_id,level=level_id )
+
+
+#
+# from sqlalchemy.ext.declarative import DeclarativeMeta
+#
+# class AlchemyEncoder(json.JSONEncoder):
+#
+#     def default(self, obj):
+#         if isinstance(obj.__class__, DeclarativeMeta):
+#             # an SQLAlchemy class
+#             fields = {}
+#             for field in [x for x in dir(obj) if not x.startswith('_') and x != 'metadata']:
+#                 data = obj.__getattribute__(field)
+#                 try:
+#                     json.dumps(data) # this will fail on non-encodable values, like other classes
+#                     fields[field] = data
+#                 except TypeError:
+#                     fields[field] = None
+#             # a json-encodable dict
+#             return fields
+#
+#         return json.JSONEncoder.default(self, obj)
+#
+# # c = YourAlchemyClass()
+# # print (json.dumps(c, cls=AlchemyEncoder))
+#
+# @app.route('/search', methods=["GET","POST"])
+# def search():
+#     if request.method == 'GET':
+#         text = request.args['searchText']
+#         # search_data = request.form.get('search_data')
+#         # print(search_data)
+#         search = "%{}%".format(text)
+#         result = Students.query.filter(Students.name.like(search)).all()
+#
+#         print(json.dumps(result, cls=AlchemyEncoder))
+#         return json.dumps({"success": True, 'data':json.dumps(result, cls=AlchemyEncoder)})
+#         # return render_template("student.html", pagination=pagination ,rows=rowss,major_level=major_level_dec,majors=majors,levels=levels )
+#
+from sqlalchemy import and_, or_, not_
+@app.route('/search', methods=["GET","POST"])
+def search():
+    if request.method == 'POST':
+        text = request.form.get('search_data')
+        major_search = request.form.get('major_filter')
+        level_search = request.form.get('level_filter')
+
+        if isinstance(text, int):
+            result = Students.query.filter(Students.un_id == text ).all()
+        elif isinstance(text, str):
+            search = "%{}%".format(text)
+            result = Students.query.filter(Students.name.like(search) ).all()
+
+        if major_search and level_search:
+            result = Students.query.filter(Students.major_id == major_search,Students.level_id == level_search).all()
+        majors =  Majors.query.all()
+        levels =  Levels.query.all()
+        page = request.args.get(get_page_parameter(), type=int, default=1)
+        # print(page)
+
+        rowss = {
+            "students":result,
+        }
+        major_level_dec = []
+        for row in result:
+            # print(row.major_id.)
+            major =  Majors.query.get(row.major_id)
+            level =  Levels.query.get(row.level_id)
+            major_level_dec.append({
+            "student_id": row.id,
+            "major":major.name,
+            "level": level.name
+            })
+        rowss["data"] = major_level_dec
+        # print("================",rowss)
+            # print(major_level_dec)
+        pagination = Pagination(page=page, css_framework="bootstrap4",total=len(result), record_name='rows')
+        # print(pagination)
+
+        return render_template("student.html", pagination=pagination ,rows=rowss,major_level=major_level_dec,majors=majors,levels=levels )
+
+
 
 
 # Generate Word File
