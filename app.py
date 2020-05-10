@@ -313,6 +313,19 @@ def major():
     # db.session.commit()
     return redirect("/setting")
 
+@app.route('/level', methods=["POST"])
+@login_required
+def level():
+    name = request.form.get("name")
+    notes = request.form.get("notes")
+
+    level = Levels(name=name,notes=notes)
+    print(level)
+    db.session.add(level)
+    db.session.commit()
+    return redirect("/setting")
+
+
 def get_users(offset=0, per_page=10):
     return users[offset: offset + per_page]
 
@@ -491,7 +504,30 @@ def search():
         return render_template("student.html", pagination=pagination ,rows=rowss,major_level=major_level_dec,majors=majors,levels=levels )
 
 
-
+@app.route("/delete/<path:path>/<int:id>")
+@login_required
+def deleterecord(path,id):
+    if path == 'levels':
+        level = Levels.query.filter_by(id=id).first()
+        merge_level = db.session.merge(level)
+        db.session.delete(merge_level)
+        db.session.commit()
+        flash('Successfully Delete')
+        return redirect(url_for('setting'))
+    elif path == 'majors':
+        major = Majors.query.filter_by(id=id).first()
+        merge_major = db.session.merge(major)
+        db.session.delete(merge_major)
+        db.session.commit()
+        flash('Successfully Delete')
+        return redirect(url_for('setting'))
+    elif path == 'users':
+        user = Users.query.filter_by(id=id).first()
+        merge_user = db.session.merge(user)
+        db.session.delete(merge_user)
+        db.session.commit()
+        flash('Successfully Delete')
+        return redirect(url_for('setting'))
 
 # Generate Word File
 from docx.enum.text import WD_ALIGN_PARAGRAPH
