@@ -51,9 +51,10 @@ Session(app)
 # DB Connection Postgress
 
 # app.config.from_object(os.environ['APP_SETTINGS'])
+# app.config.from_object(Config)
 app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:123456789@localhost:5432/student_barcode"
 db = SQLAlchemy(app)
-
+migrate = Migrate(app, db)
 
 # POSTGRES = {
 #     'user': 'postgres',
@@ -105,10 +106,7 @@ def signup():
             db.session.add(user)
             db.session.commit()
 
-        #     # Get Username to store Session
-        #     user = db.execute("SELECT id,username FROM users WHERE email = :email",{"email":email}).fetchone()
-        #     print(user)
-        #     # print(session['secret_key'])
+            # Get Username to store Session
             session['userid'] = user.id
             session['username'] = user.username
             # redirect to Home
@@ -137,16 +135,22 @@ def login():
         password = request.form.get("password")
         hash_password = generate_password_hash(password)
         result = Users.query.filter_by(email=email).first()
-        # print(result.name)
+        print(result.status)
         #
         if result:
-            if check_password_hash(result.password, password):
+            if check_password_hash(result.password, password) and result.status == True:
                 session["user_id"] = result.id
                 session["user_name"] = result.name
+                session["is_super_user"] = result.is_super_user
+                session["is_admin"] = result.is_admin
+                result.last_login = time.strftime('%A %B, %d %Y %H:%M:%S')
+                print(result.last_login)
+                db.session.commit()
                 return redirect('/')
             else:
-                # flask.flash('Invalid email or password')
+                # flash('Invalid email or password')
                 message = "error in Password or username"
+                print("Error")
                 return redirect("/login")
         else:
             message = "Incorrect Email"
@@ -213,27 +217,58 @@ def logout():
 
 
 @app.route('/setting')
+@login_required
 def setting():
     majors =  Majors.query.all(),
     levels =  Levels.query.all(),
+    if session["is_super_user"]:
+        users  =  Users.query.filter(Users.id != session["user_id"]).all()
+    else:
+        users  =  Users.query.filter(Users.id != session["user_id"], Users.is_super_user == None).all()
+        print(users)
 
     # rows = {
     #     levels: levels[0],
     # }
-    print(levels[0])
-    print(levels[0][0].name)
-    return render_template('setting.html', levels=levels[0], majors=majors[0])
+    return render_template('setting.html', users=users, levels=levels[0], majors=majors[0])
 
-@app.route('/level', methods=["POST"])
-def level():
-    name = request.form.get("name")
-    notes = request.form.get("notes")
+@app.route('/adduser', methods=["POST"])
+@login_required
+def users():
+    if request.method == 'POST':
+        username = request.form.get("name")
+        email = request.form.get("email")
+        password = generate_password_hash(request.form.get("password"))
+        is_admin = request.form.get("is_admin")
+        is_user = request.form.get("is_user")
+        status = request.form.get("status")
+        if is_admin == "1":
+            is_admin = True
+        else:
+            is_admin = False
 
-    level = Levels(name=name,notes=notes)
-    print(level)
-    db.session.add(level)
-    db.session.commit()
-    return redirect("/setting")
+        if is_user == "1":
+            is_user = True
+        else:
+            is_user = False
+
+        if status == "1":
+            status = True
+        else:
+            status = False
+
+        print(is_user)
+        check_email = db.session.query(db.exists().where(Users.email == email)).scalar()
+        if not check_email:
+            user = Users(name=username,username=username,email=email,password=password, is_admin=is_admin, is_user=is_user, status=status)
+            db.session.add(user)
+            db.session.commit()
+        flash("تم أضافة المستخدم بنجاح!")
+        return redirect("/setting")
+    else:
+        flash("Error!")
+        return redirect("/setting")
+
 
 @app.route('/major', methods=["POST"])
 def major():
@@ -288,6 +323,7 @@ def index():
 #
 #
 @app.route("/upload", methods=["GET","POST"])
+@login_required
 def student_upload_data():
     """Upload Student Data."""
 

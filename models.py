@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
-
+from sqlalchemy.orm import backref
 db = SQLAlchemy()
 
 
@@ -20,6 +20,11 @@ class Users(UserMixin,db.Model):
     update_at = db.Column(db.DateTime, nullable=True)
     last_login = db.Column(db.DateTime,index=False,unique=False,nullable=True)
 
+    is_super_user = db.Column(db.Boolean, nullable=True)
+    is_admin = db.Column(db.Boolean, nullable=True)
+    is_user = db.Column(db.Boolean,  nullable=True)
+    status = db.Column(db.Boolean,  nullable=True)
+
     def set_password(self, password):
         """Create hashed password."""
         self.password = generate_password_hash(password, method='sha256')
@@ -28,11 +33,17 @@ class Users(UserMixin,db.Model):
         """Check hashed password."""
         return check_password_hash(self.password, password)
 
-    def __init__(self, name,username,email,password):
-        self.name = name
-        self.username = username
-        self.email = email
-        self.password = password
+    # def __init__(self, name,username,email,password,update_at,last_login,is_super_user,is_admin,is_user,status):
+    #     self.name = name
+    #     self.username = username
+    #     self.email = email
+    #     self.password = password
+    #     self.update_at = update_at
+    #     self.last_login = last_login
+    #     self.is_super_user = is_super_user
+    #     self.is_admin = is_admin
+    #     self.is_user = is_user
+    #     self.status = status
 
     def __repr__(self):
         return ("<User {}- email {}.>".format(self.name,self.email))
@@ -77,7 +88,7 @@ class Majors(db.Model):
     create_at = db.Column(db.DateTime, nullable=False,default=datetime.utcnow)
     update_at = db.Column(db.DateTime, nullable=True)
 
-    student = db.relationship('Students', backref='majors', lazy=True)
+    student = db.relationship('Students', backref='majors', lazy=True ,cascade="all,delete")
     def __repr__(self):
         return ("<Majors| name : {}".format(self.name))
 
@@ -88,10 +99,11 @@ class Levels(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), unique=True, nullable=False)
-    notes = db.Column(db.String(250), nullable=False)
+    notes = db.Column(db.String(250), nullable=True)
     create_at = db.Column(db.DateTime, nullable=False,default=datetime.utcnow)
     update_at = db.Column(db.DateTime, nullable=True)
-    student = db.relationship('Students', backref='level', lazy=True)
+    student = db.relationship('Students', backref='level', cascade="all,delete", lazy=True)
+    # student = db.relationship('Students', backref=backref('level', cascade="all,delete"), lazy=True)
 
     def __repr__(self):
         return ("<Levels| name : {}".format(self.name))

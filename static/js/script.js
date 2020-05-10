@@ -18,6 +18,35 @@ function toggle(source) {
     checkboxes[i].checked = source.checked;
   }
 }
+
+function toggle_1(source) {
+  checkboxes = document.getElementsByName('major');
+  for(var i=0, n=checkboxes.length;i<n;i++) {
+    checkboxes[i].checked = source.checked;
+  }
+}
+
+function showButtons (checkbox, box) {
+
+    var chboxs = document.getElementsByName(checkbox);
+    var vis = "none";
+    for(var i=0;i<chboxs.length;i++) {
+        if(chboxs[i].checked){
+         vis = "inline-block";
+            break;
+        }
+    }
+    document.getElementById(box).style.display = vis;
+
+
+}
+
+function toggle_2(source) {
+  checkboxes = document.getElementsByName('level');
+  for(var i=0, n=checkboxes.length;i<n;i++) {
+    checkboxes[i].checked = source.checked;
+  }
+}
 //
 $(document).ready(function(){
   $('#myTab a').on('click', function (e) {
@@ -32,16 +61,16 @@ $(document).ready(function(){
   $("#show_nav_toggel").click(function(){
     $("#sidebar").fadeToggle();
   });
-
-  var x = document.getElementById('sidebar');
-  var button = document.getElementById('show_nav_toggel');
-  console.log(x.style.display);
-
-  if (x.style.display === "none"){
-    button.innerHTML = "<i class='fa fa-angle-left'></i>";
-  }else {
-    button.innerHTML = "<i class='fa fa-angle-right'></i>";
-  }
+  //
+  // var x = document.getElementById('sidebar');
+  // var button = document.getElementById('show_nav_toggel');
+  // console.log(x.style.display);
+  //
+  // if (x.style.display === "none"){
+  //   button.innerHTML = "<i class='fa fa-angle-left'></i>";
+  // }else {
+  //   button.innerHTML = "<i class='fa fa-angle-right'></i>";
+  // }
 
 
 });
