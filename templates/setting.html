@@ -113,7 +113,13 @@
             <th scope="row">{{ row.id }}</th>
             <td>{{ row.name }}</td>
             <td>{{ row.email }}</td>
-            <td>{{ row.last_login }}</td>
+            <td>
+              {% if not row.last_login %}
+                -
+              {% else %}
+                {{ row.last_login }}
+              {% endif %}
+            </td>
             {% if session["is_super_user"] %}
             <td>
               {% if row.is_super_user %}

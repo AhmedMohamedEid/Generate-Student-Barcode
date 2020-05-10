@@ -139,6 +139,11 @@ def signup():
         return render_template("signup.html", message=message)
 
 
+
+def days_between(d1, d2):
+    d1 = datetime.strptime(d1, "%Y-%m-%d")
+    d2 = datetime.strptime(d2, "%Y-%m-%d")
+    return abs((d2 - d1))
 # class MyForm(FlaskForm):
 #     name = StringField('name', validators=[DataRequired()])
 #     print(name)
@@ -163,6 +168,7 @@ def login():
                 session["is_admin"] = result.is_admin
                 result.last_login = time.strftime('%A %B, %d %Y %H:%M:%S')
                 print(result.last_login)
+                db.session.merge(result)
                 db.session.commit()
                 return redirect('/')
             else:
@@ -621,7 +627,7 @@ def generate_svg():
                 print(time.strftime('%A %B, %d %Y %H:%M:%S'))
                 st_img_path.update_at = time.strftime('%A %B, %d %Y %H:%M:%S')
                 print(fullname)
-                # db.execute("UPDATE student SET barcode_path=:barcode_path WHERE id=:id",{"barcode_path":path, "id":row[0]})
+                db.session.merge(st_img_path)
                 db.session.commit()
     return redirect(url_for("all_student"))
 #
