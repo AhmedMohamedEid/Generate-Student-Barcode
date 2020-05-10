@@ -2,15 +2,21 @@
 import csv
 import os
 
-from flask import Flask, session,send_file,render_template,redirect, request, url_for,jsonify, Response
+from flask import Flask, session,send_file,render_template,redirect,flash, request, url_for,jsonify, Response
 from flask_session import Session
 from flask_login import LoginManager, UserMixin, login_required, login_user, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
 # Database
-from sqlalchemy import create_engine
+# from config import Config
+from sqlalchemy import event, create_engine
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import scoped_session, sessionmaker
+
+from flask_migrate import Migrate
+
+# from sqlalchemy.exc import IntegrityError
+from sqlalchemy.event import listen
 from werkzeug import secure_filename
 import time
 import json
@@ -83,6 +89,18 @@ def login_required(f):
             return redirect("/login")
         return f(*args, **kwargs)
     return decorated_function
+
+
+
+# second solution
+@event.listens_for(Users.__table__, 'after_create')
+def insert_initial_values(*args, **kwargs):
+    db.session.add(Users(name='Ahmed Eid',username='admin',email='ahmedmohamedeid97@gmail.com',password=generate_password_hash("admin"),is_super_user=True, is_admin=True))
+    # db.session.add(Users(name='medium'))
+    # db.session.add(Users(name='high'))
+    db.session.commit()
+
+# event.listen(Users.__table__, 'after_create', insert_initial_values)
 
 
 
