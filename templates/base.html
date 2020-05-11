@@ -42,15 +42,17 @@
       {% block body %}
 
       {% endblock %}
+      {% if request.url_rule.endpoint != 'login' %}
+      {% if request.url_rule.endpoint != 'signup' %}
         <div class="hide-nav">
           <span class="text-dark" ><button type="button" class="btn btn-link" id="show_nav_toggel" name="button"><i class="fa fa-angle-right"></i></button>
           </span>
         </div>
-
+      {% endif %}
+      {% endif %}
       </div>
       {% if request.url_rule.endpoint != 'login' %}
       {% if request.url_rule.endpoint != 'signup' %}
-
       <nav id="sidebar">
 				<div class="p-4 pt-5">
 
@@ -58,7 +60,7 @@
           <div class="text-center">
 
             <!-- <img class="icon" src="{{  url_for('static', filename='image/icon1.png') }}" width="100px" height="100px" title="Barcode Logo" alt="Barcode Logo"> -->
-            <img class="icon" src="{{ url_for('event_logo', id=2) }}" width="100px" height="100px" title="Barcode Logo" alt="Barcode Logo">
+            <img class="icon" src="{{ url_for('event_logo', id=session["company_id"]) }}"  title="Barcode Logo" alt="Barcode Logo">
           </div>
 					<!-- <h5>Categories</h5> -->
 	        <ul class="list-unstyled components mb-5">
@@ -78,7 +80,7 @@
 	          </li>
 
 	        </ul>
-					<div class="mb-5">
+					<!-- <div class="mb-5">
 						<h5>Tag Cloud</h5>
             <div class="tagcloud">
               <a href="#" class="tag-cloud-link">dish</a>
@@ -99,11 +101,12 @@
 	              <input type="text" class="form-control" placeholder="Enter Email Address">
 	            </div>
 	          </form>
-					</div>
+					</div> -->
 	      </div>
     	</nav>
       {% endif %}
       {% endif %}
+
 		</div>
 
     <script src="{{ url_for('static', filename='js/jquery-3.2.1.min.js') }}" ></script>

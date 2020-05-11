@@ -155,53 +155,39 @@ def login():
         email = request.form.get("username")
         password = request.form.get("password")
         hash_password = generate_password_hash(password)
-        result = Users.query.filter_by(email=email).first()
-        print(result.status)
 
+        result = Users.query.filter_by(email=email).first()
 
         if result:
+            company = Company.query.get(result.company_id)
+            current_date = datetime.datetime.now()
+            if current_date > company.lock_at:
+                all_users = Users.query.filter(Users.is_super_user != True).all()
+                for user in all_users:
+                    user.status = False
+                    db.session.merge(user)
+                db.session.commit()
+
             if check_password_hash(result.password, password) and result.status == True and result.is_user == True:
                 session["user_id"] = result.id
                 session["user_name"] = result.name
                 session["is_super_user"] = result.is_super_user
                 session["is_admin"] = result.is_admin
-                result.last_login = time.strftime('%A %B, %d %Y %H:%M:%S')
+                session["company_id"] = result.company_id
+                result.last_login = datetime.datetime.now()
                 print(result.last_login)
                 db.session.merge(result)
                 db.session.commit()
                 return redirect('/')
             else:
-                # flash('Invalid email or password')
-                message = "error in Password or username"
-                print("Error")
+                flash('Invalid email or password or your account not approived')
                 return redirect("/login")
         else:
-            message = "Incorrect Email"
-            return render_template("login.html",message="message")
-
-    return render_template('login.html')
-
-# if not current_user.is_authenticated:
-#     return current_app.login_manager.unauthorized()
-#
-# @bull.route("/login", methods=["GET", "POST"])
-# def login():
-#     """For GET requests, display the login form.
-#     For POSTS, login the current user by processing the form.
-#
-#     """
-#     print (db)
-#     form = LoginForm()
-#     if form.validate_on_submit():
-#         user = User.query.get(form.email.data)
-#         if user:
-#             if bcrypt.check_password_hash(user.password, form.password.data):
-#                 user.authenticated = True
-#                 db.session.add(user)
-#                 db.session.commit()
-#                 login_user(user, remember=True)
-#                 return redirect(url_for("bull.reports"))
-#     return render_template("login.html", form=form)
+            flash("Please Check your Email or password")
+            return render_template("login.html")
+        return render_template("login.html")
+    else:
+        return render_template('login.html')
 
 
 @app.route("/logout")
@@ -210,33 +196,6 @@ def logout():
     # logout_user()
     session.clear()
     return redirect('/login')
-
-
-# @mod.route('/')
-# def index():
-#     # search = False
-#     # q = request.args.get('q')
-#     # if q:
-#     #     search = True
-#     #
-#     # page = request.args.get(get_page_parameter(), type=int, default=1)
-#     #
-#     # users = User.find(...)
-#     # pagination = Pagination(page=page, total=users.count(), search=search, record_name='users')
-#     # # 'page' is the default name of the page parameter, it can be customized
-#     # # e.g. Pagination(page_parameter='p', ...)
-#     # # or set PAGE_PARAMETER in config file
-#     # # also likes page_parameter, you can customize for per_page_parameter
-#     # # you can set PER_PAGE_PARAMETER in config file
-#     # e.g. Pagination(per_page_parameter='pp')
-#
-#     return render_template('/index.html',users=users,)
-#
-# def get_data():
-#     majors =  Majors.query.all(),
-#     levels =  Levels.query.all(),
-
-
 
 
 @app.route('/setting')
@@ -249,7 +208,7 @@ def setting():
         users  =  Users.query.filter(Users.id != session["user_id"]).all()
     else:
         users  =  Users.query.filter(Users.id != session["user_id"], or_(Users.is_super_user == False,Users.is_super_user == None)).all()
-        print(users)
+
 
     # rows = {
     #     levels: levels[0],
@@ -401,9 +360,73 @@ def updateRecords(path, id):
     elif path == "company":
         company = Company.query.get(id)
         return render_template('setting_edite.html', company=company)
+    elif path == "users" and request.method == 'POST':
+        name = request.form.get("name")
+        username = request.form.get("name")
+        email = request.form.get("email")
+        company_id = request.form.get("company_id")
+        # password = generate_password_hash(request.form.get("password"))
+        is_admin = request.form.get("is_admin")
+        is_user = request.form.get("is_user")
+        status = request.form.get("status")
 
+        is_admin = True if is_admin == "1" else False
 
+        is_user = True if is_user == "1" else False
 
+        status = True if status == "1" else False
+
+        users = Users.query.get(id)
+
+        if is_admin:
+            is_user = True
+        # print(company_id)
+        users.company_id = company_id
+        users.name = name
+        users.email = email
+        users.is_admin = is_admin
+        users.is_user = is_user
+        users.status = status
+        users.update_at = datetime.datetime.now()
+
+        db.session.merge(users)
+        db.session.commit()
+        return redirect("/setting")
+    elif path == 'users':
+        users = Users.query.get(id)
+        companys_user = Company.query.all()
+        return render_template('setting_edite.html', users=users, companys_user=companys_user )
+    elif path == "majors" and request.method == 'POST':
+        name = request.form.get("name")
+        # levels = request.form.getlist("levels")
+        notes = request.form.get("notes")
+        major = Majors.query.get(id)
+        major.name = name
+        major.notes = notes
+        major.update_at = datetime.datetime.now()
+
+        db.session.merge(major)
+        db.session.commit()
+        return redirect("/setting")
+    elif path == 'majors':
+        major = Majors.query.get(id)
+        return render_template('setting_edite.html', major=major)
+
+    elif path == "levels" and request.method == 'POST':
+        name = request.form.get("name")
+        # levels = request.form.getlist("levels")
+        notes = request.form.get("notes")
+        level = Levels.query.get(id)
+        level.name = name
+        level.notes = notes
+        level.update_at = datetime.datetime.now()
+
+        db.session.merge(level)
+        db.session.commit()
+        return redirect("/setting")
+    elif path == 'levels':
+        level = Levels.query.get(id)
+        return render_template('setting_edite.html', level=level)
 
 def get_users(offset=0, per_page=10):
     return users[offset: offset + per_page]

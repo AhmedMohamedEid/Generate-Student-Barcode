@@ -25,6 +25,8 @@ class Users(UserMixin,db.Model):
     is_user = db.Column(db.Boolean,  nullable=True)
     status = db.Column(db.Boolean,  nullable=True)
 
+    company_id = db.Column(db.Integer, db.ForeignKey('company.id'),nullable=True)
+
     def set_password(self, password):
         """Create hashed password."""
         self.password = generate_password_hash(password, method='sha256')
@@ -67,6 +69,7 @@ class Company(db.Model):
     nu_of_days_for_lock = db.Column(db.Integer, nullable=True)
     status = db.Column(db.Boolean, default=True, nullable=True)
 
+    users = db.relationship('Users', backref='company', lazy=True ,cascade="all,delete")
 
     def __repr__(self):
         return ("<Company| name : {}, email: {}".format(self.name,self.email))

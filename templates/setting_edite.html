@@ -18,6 +18,7 @@
         <!-- <h1>Successfully DELETE</h1> -->
       </div>
     {%- endif %}
+
     {% if company %}
 
     <h3 class="mb-1 text-right">تعديل البيانات</h3>
@@ -65,5 +66,88 @@
         <a href="{{url_for('setting')}}" class="btn btn-danger">ألفاء</a>
       </form>
     </div>
+    {% elif users %}
+      <h3 class="mb-1 text-right">تعديل البيانات</h3>
+      <div class="setting-form m-3">
+        <form class="p-3" action="{{ url_for('updateRecords' , path='users', id= users.id) }}" method="post">
+          {{ csrf_token }}
+          <div class="form-group">
+            <label for="exampleInputcompany3">الشركة</label>
+            <select class="form-control" id="exampleInputcompany3" name="company_id">
+              <option value="0">....</option>
+              {% for row in companys_user %}
+              <option value="{{ row.id }}" {% if users.company_id == row.id %}selected {% endif %}>{{ row.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="exampleInputname3">الاسم</label>
+            <input type="text" class="form-control" value="{{ users.name }}" name="name" required id="exampleInputname3" aria-describedby="namelHelp">
+          </div>
+          <div class="form-group">
+            <label for="exampleInputEmail02">البريد الالكتروني</label>
+            <input type="email" class="form-control" value="{{ users.email }}" name="email" required id="exampleInputEmail02" aria-describedby="emaillHelp">
+          </div>
+
+          <div class="form-group">
+            <label for="exampleInputisAdmin02">مدير؟ : </label>
+            <input type="radio" {% if users.is_admin == 1 %} checked {% endif %} name="is_admin" value="1"  aria-describedby="textHelp">نعم
+            <input type="radio" {% if users.is_admin == 0 %} checked {% endif %} name="is_admin" value="0"  aria-describedby="textHelp">لا
+          </div>
+          <div class="form-group">
+            <label for="exampleInputisuser02">مستخدم : </label>
+            <input type="radio" {% if users.is_user == 1 %} checked {% endif %}  name="is_user" value="1" aria-describedby="textHelp">نعم
+            <input type="radio" {% if users.is_user == 0 %} checked {% endif %} name="is_user" value="0"  aria-describedby="textHelp">لا
+          </div>
+          <div class="form-group">
+            <label for="exampleInputstatus02">الحالة : </label>
+            <input type="radio" {% if users.status == 1 %} checked {% endif %} name="status" value="1"  aria-describedby="textHelp">مفعل
+            <input type="radio" {% if users.status == 0 %} checked {% endif %} name="status" value="0"  aria-describedby="textHelp">غير مفعل
+          </div>
+
+
+          <button type="submit" class="btn btn-info">حفظ</button>
+          <a href="{{url_for('setting')}}" class="btn btn-danger">ألفاء</a>
+        </form>
+      </div>
+
+    {% elif major %}
+      <div class="setting-form m-3">
+        <form class="p-3" action="{{ url_for('updateRecords' , path='majors', id= major.id) }}" method="post">
+          {{ csrf_token }}
+          <div class="form-group">
+            <label for="exampleInputName">الاسم</label>
+            <input type="text" class="form-control" value="{{ major.name }}" name="name" required id="exampleInputName" aria-describedby="namelHelp">
+            <!-- <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small> -->
+          </div>
+          <div class="form-group">
+            <label for="exampleInputNotes1">ملاحظات</label>
+            <input type="text" class="form-control" value="{{ major.notes }}" name="notes" id="exampleInputNotes1" aria-describedby="notesHelp">
+            <!-- <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small> -->
+          </div>
+          <button type="submit" class="btn btn-info">حفظ</button>
+          <a href="{{url_for('setting')}}" class="btn btn-danger">ألفاء</a>
+        </form>
+      </div>
+    {% elif level %}
+      <div class="setting-form m-3">
+        <form class="p-3" action="{{ url_for('updateRecords' , path='levels', id= level.id) }}" method="post">
+          {{ csrf_token }}
+          <div class="form-group">
+            <label for="exampleInputName">الاسم</label>
+            <input type="text" class="form-control" value="{{ level.name }}" name="name" required id="exampleInputName" aria-describedby="namelHelp">
+            <!-- <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small> -->
+          </div>
+          <div class="form-group">
+            <label for="exampleInputNotes01">ملاحظات</label>
+            <input type="text" class="form-control" value="{{ level.notes }}" name="notes" id="exampleInputNotes01" aria-describedby="notesHelp">
+            <!-- <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small> -->
+          </div>
+          <button type="submit" class="btn btn-info">حفظ</button>
+          <a href="{{url_for('setting')}}" class="btn btn-danger">ألفاء</a>
+        </form>
+      </div>
     {% endif %}
+
+
 {% endblock %}

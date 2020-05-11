@@ -8,32 +8,48 @@
 <div class="container">
   <div class="title">
     <h1 class="text-center">
-      <img class="icon" src="{{  url_for('static', filename='image/icon1.png') }}" width="100px" height="100px" title="Barcode Logo" alt="Barcode Logo">
+      <!-- <img class="icon" src="{{  url_for('static', filename='image/icon1.png') }}" width="100px" height="100px" title="Barcode Logo" alt="Barcode Logo"> -->
+      <img class="p-2" src="{{ url_for('event_logo', id=2) }}" style="margin: 15px auto;" title="Barcode Logo" alt="Barcode Logo">
     </h1>
   </div>
-  <div class="" style="width:40%; margin:auto">
+  <div class="m-3 p-3" style="margin:auto">
     <div class="title form-title">
-      <h2 class="text-center">Login</h2>
+      <h2 class="text-center">تسجيل دخول</h2>
     </div>
-    <form method="post" action="{{ url_for('login') }}">
-      {{ csrf_token }}
 
-      <div class="form-group">
-        <label for="exampleInputUsername">Email address</label>
-        <input type="text" class="form-control" name="username" required id="exampleInputUsername" aria-describedby="emailHelp">
-        <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+    {%- if get_flashed_messages %}
+
+      <div class="messages text-center" style="width: 50%;margin: auto;">
+        {%- for message in get_flashed_messages() %}
+        <div class="alert alert-primary" role="alert">
+          {{ message }}
+        </div>
+          {%- endfor %}
+        <!-- <h1>Successfully DELETE</h1> -->
       </div>
-      <div class="form-group">
-        <label for="exampleInputPassword1">Password</label>
-        <input type="password" name="password" class="form-control" required id="exampleInputPassword1">
-      </div>
-      <div class="form-group form-check">
-        <input type="checkbox" class="form-check-input" id="exampleCheck1">
-        <label class="form-check-label" for="exampleCheck1">Check me out</label>
-      </div>
-      <button type="submit"  class="btn btn-primary">Login</button>
-    </form>
-    <p class="text-center">I don't have a acount! <a href="{{ url_for('signup') }}" class="btn btn-link">Signup</a></p>
+    {%- endif %}
+    <div class="setting-form m-3">
+      <form class="p-3" action="{{ url_for('login') }}" method="post">
+        {{ csrf_token }}
+        <div class="form-group">
+          <label for="exampleInputUsername">البريدالالكتروني</label>
+          <input type="text" class="form-control" autofocus name="username" id="exampleInputUsername" aria-describedby="emailHelp">
+          <!-- <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small> -->
+        </div>
+        <div class="form-group">
+          <label for="exampleInputPassword1">كلمة المرور</label>
+          <input type="password" name="password" class="form-control"  id="exampleInputPassword1">
+        </div>
+        <!-- <div class="form-group form-check">
+          <input type="checkbox" class="form-check-input" id="exampleCheck1">
+          <label class="form-check-label" for="exampleCheck1">Check me out</label>
+        </div> -->
+        <button type="submit"  class="btn btn-primary">دخول</button>
+      </form>
+    </div>
+    <div style="direction: rtl;">
+      <p class="text-center">اريد التسجيل.. <a href="{{ url_for('signup') }}" class="btn btn-link">تسجيل جديد</a></p>
+    </div>
   </div>
 </div>
 {% endblock%}
