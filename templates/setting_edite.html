@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Settings
+{% endblock %}
+
+{% block body %}
+<!-- Page Content  -->
+
+    {%- if get_flashed_messages %}
+
+      <div class="messages text-center">
+        {%- for message in get_flashed_messages() %}
+        <div class="alert alert-primary" role="alert">
+          {{ message }}
+        </div>
+          {%- endfor %}
+        <!-- <h1>Successfully DELETE</h1> -->
+      </div>
+    {%- endif %}
+    {% if company %}
+
+    <h3 class="mb-1 text-right">تعديل البيانات</h3>
+    <div class="setting-form m-3">
+      <form class="p-3" action="{{ url_for('updateRecords' , path='company', id= company.id) }}" method="post" enctype="multipart/form-data">
+        {{ csrf_token }}
+        <div class="form-group">
+          <label for="exampleInputname04">الاسم</label>
+          <input type="text" class="form-control" value="{{ company.name }}" name="name" required id="exampleInputname04" aria-describedby="namelHelp">
+        </div>
+        <div class="form-group">
+          <label for="exampleInputEmail04">البريد الالكتروني</label>
+          <input type="email" class="form-control" value="{{ company.email }}" name="email" required id="exampleInputEmail04" aria-describedby="emaillHelp">
+        </div>
+        <div class="form-group">
+          <label for="exampleInputPhone04">رقم الهاتف</label>
+          <input type="text" class="form-control" value="{{ company.phone }}" name="phone" id="exampleInputPhone04" aria-describedby="passHelp">
+        </div>
+        <div class="form-group">
+          <label for="exampleInputPageUrl04">عنوان الصفحة</label>
+          <input type="url" class="form-control" name="page_url" value="{{ company.page_url }}" id="exampleInputPageUrl04" aria-describedby="passHelp">
+        </div>
+
+        <div class="form-group">
+          <label for="exampleInputPageUrl04">الشعار</label>
+          <input type="file" name="logo" value="{{ company.image_name }}" id="exampleInputPageUrl04" aria-describedby="passHelp">
+        </div>
+
+        <div class="form-group">
+          <label for="exampleInputnotes04">الوصف</label>
+          <input type="text" class="form-control" value="{{ company.notes }}" name="notes" id="exampleInputnotes04" aria-describedby="passHelp">
+        </div>
+        {% if session["is_super_user"] %}
+        <div class="form-group">
+          <label for="exampleInputNuDays04">عدد ايام الترخيص</label>
+          <input type="number" class="form-control" value="{{ company.nu_of_days_for_lock }}" name="nu_of_days_for_lock" id="exampleInputNuDays04" aria-describedby="passHelp">
+        </div>
+        <div class="form-group">
+          <label for="exampleInputstatus04">الحالة : </label>
+          <input type="radio" checked name="status" value="1"  aria-describedby="textHelp">مفعل
+          <input type="radio"  name="status" value="0"  aria-describedby="textHelp">غير مفعل
+        </div>
+        {% endif %}
+        <button type="submit" class="btn btn-info">حفظ</button>
+        <a href="{{url_for('setting')}}" class="btn btn-danger">ألفاء</a>
+      </form>
+    </div>
+    {% endif %}
+{% endblock %}
