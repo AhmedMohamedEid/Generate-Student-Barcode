@@ -26,7 +26,7 @@
         </div>
       {%- endif %}
       <div class="setting-form m-3">
-        <form class="p-3" action="{{ url_for('wizard_setting' , path='company') }}" method="post">
+        <form class="p-3" action="{{ url_for('wizard_setting' , path='company') }}" method="post" enctype="multipart/form-data">
           {{ csrf_token }}
           <div class="form-group">
             <label for="exampleInputname07">الاسم</label>

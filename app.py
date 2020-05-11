@@ -189,10 +189,8 @@ def signup():
 
 @app.route('/<path:path>/wizard', methods=('GET', 'POST'))
 def wizard_setting(path):
-    if path == "company":
 
-        return render_template('wizard_setting.html', company=path)
-    elif request.method == "POST" and path == "company":
+    if path == "company" and request.method == "POST":
         name = request.form.get("name")
         email = request.form.get("email")
         phone = request.form.get("phone")
@@ -212,7 +210,10 @@ def wizard_setting(path):
         db.session.merge(res)
         db.session.commit()
         flash("تم الاضافة بنجاح")
-        return redirect(url_for('wizard_setting', users=path))
+        return redirect(url_for('wizard_setting', path="users"))
+    if path == "company":
+
+        return render_template('wizard_setting.html', company=path)
 
     elif path == "users" and request.method == "POST" :
         username = request.form.get("name")
