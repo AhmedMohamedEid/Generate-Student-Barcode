@@ -144,13 +144,96 @@ def signup():
         print(message)
         return render_template("signup.html", message=message)
 
+# print("email", email)
+# print("pass", password)
+# valid_email = False
+# valid_pass = False
+# if email == None:
+#     flash("البريد الالكتروني فارغ...")
+#     valid_email = False
+# elif len(email) == 8:
+#     flash("البريد الالكتروني اقل من 8 احرف.")
+#     valid_email = False
+# else:
+#     valid_email = True
+# if password == None:
+#     flash("كلمة المرور فارغة ...")
+#     valid_pass = False
+# elif len(password) == 8:
+#     flash(" كلمة المرور اقل من 8 احرف.")
+#     valid_pass = False
+# else:
+#     valid_pass = True
+# print(valid_email)
+# print(valid_pass)
+
+@app.route('/<path:path>/wizard', methods=('GET', 'POST'))
+def wizard_setting(path):
+    if path == "company":
+
+        return render_template('wizard_setting.html', company=path)
+    elif request.method == "POST" and path == "company":
+        name = request.form.get("name")
+        email = request.form.get("email")
+        phone = request.form.get("phone")
+        page_url = request.form.get("page_url")
+        notes = request.form.get("notes")
+        nu_of_days_for_lock = request.form.get("nu_of_days_for_lock")
+
+        lock_at = datetime.datetime.now() + datetime.timedelta(days=int(nu_of_days_for_lock))
+
+        status = True
+
+        file = request.files['logo']
+        image_name = file.filename
+
+        res = Company(name=name, email=email, phone=phone, page_url=page_url,notes=notes,nu_of_days_for_lock=nu_of_days_for_lock,lock_at=lock_at,image_name=image_name,image=file.read())
+        db.session.add(res)
+        db.session.merge(res)
+        db.session.commit()
+        flash("تم الاضافة بنجاح")
+        return redirect(url_for('wizard_setting', users=path))
+
+    elif path == "users" and request.method == "POST" :
+        username = request.form.get("name")
+        email = request.form.get("email")
+        password = generate_password_hash(request.form.get("password"))
+        is_admin = request.form.get("is_admin")
+        is_user = request.form.get("is_user")
+        status = request.form.get("status")
+
+        is_admin = True if is_admin == "1" else False
+
+        is_user = True if is_user == "1" else False
+
+        status = True if status == "1" else False
+
+        check_count = db.session.query(Users).count()
+        is_super_user = True if check_count == 0 else False
+        if is_super_user:
+            is_admin = True
+        if is_admin:
+            is_user = True
+
+        check_email = db.session.query(db.exists().where(Users.email == email)).scalar()
+        if not check_email:
+            user = Users(name=username,username=username,email=email,password=password,is_super_user=is_super_user, is_admin=is_admin, is_user=is_user, status=status)
+            db.session.add(user)
+            db.session.commit()
+        flash("تم أضافة المستخدم بنجاح!")
+        return redirect("/login")
+    elif path == "users":
+
+        company = Company.query.all()
+        if company:
+            return render_template('wizard_setting.html', companys_user=company, users='users')
+        else:
+            return render_template('wizard_setting.html', company="company")
 
 
 @app.route('/login', methods=('GET', 'POST'))
 def login():
 
-    # Forget All Session_id
-    # session.clear()
     if request.method == "POST":
         email = request.form.get("username")
         password = request.form.get("password")
@@ -187,8 +270,11 @@ def login():
             return render_template("login.html")
         return render_template("login.html")
     else:
-        return render_template('login.html')
-
+        company = Company.query.all()
+        if company:
+            return render_template('login.html')
+        else:
+            return redirect(url_for('wizard_setting', path="company"))
 
 @app.route("/logout")
 @login_required
@@ -275,6 +361,7 @@ def users():
 
 
 @app.route('/major', methods=["POST"])
+@login_required
 def major():
     name = request.form.get("name")
     levels = request.form.getlist("levels")

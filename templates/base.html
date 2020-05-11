@@ -19,6 +19,7 @@
       <div id="content" class="p-4 p-md-4 pt-5">
         {% if request.url_rule.endpoint != 'login' %}
         {% if request.url_rule.endpoint != 'signup' %}
+        {% if request.url_rule.endpoint != 'wizard_setting' %}
         <nav aria-label="breadcrumb">
           <ul class="nav">
 
@@ -39,20 +40,24 @@
         </nav>
         {% endif %}
         {% endif %}
+        {% endif %}
       {% block body %}
 
       {% endblock %}
       {% if request.url_rule.endpoint != 'login' %}
       {% if request.url_rule.endpoint != 'signup' %}
+      {% if request.url_rule.endpoint != 'wizard_setting' %}
         <div class="hide-nav">
           <span class="text-dark" ><button type="button" class="btn btn-link" id="show_nav_toggel" name="button"><i class="fa fa-angle-right"></i></button>
           </span>
         </div>
       {% endif %}
       {% endif %}
+      {% endif %}
       </div>
       {% if request.url_rule.endpoint != 'login' %}
       {% if request.url_rule.endpoint != 'signup' %}
+      {% if request.url_rule.endpoint != 'wizard_setting' %}
       <nav id="sidebar">
 				<div class="p-4 pt-5">
 
@@ -60,7 +65,7 @@
           <div class="text-center">
 
             <!-- <img class="icon" src="{{  url_for('static', filename='image/icon1.png') }}" width="100px" height="100px" title="Barcode Logo" alt="Barcode Logo"> -->
-            <img class="icon" src="{{ url_for('event_logo', id=session["company_id"]) }}"  title="Barcode Logo" alt="Barcode Logo">
+            <img class="icon" src="{{ url_for('event_logo', id=2) }}"  title="Barcode Logo" alt="Barcode Logo">
           </div>
 					<!-- <h5>Categories</h5> -->
 	        <ul class="list-unstyled components mb-5">
@@ -104,6 +109,7 @@
 					</div> -->
 	      </div>
     	</nav>
+      {% endif %}
       {% endif %}
       {% endif %}
 
