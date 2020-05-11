@@ -102,6 +102,7 @@
               </div>
             </form>
           </div>
+
           {% endif %}
 
 
@@ -112,14 +113,15 @@
             <th scope="col">الاسم</th>
             <th scope="col">البريد الالكتروني</th>
             <th scope="col">phone</th>
-            <!-- {% if session["is_super_user"] %} -->
+            {% if session["is_super_user"] %}
             <th scope="col">page_url</th>
-            <!-- {% endif %} -->
-            <th scope="col">notes</th>
             <th scope="col">create_at</th>
             <th scope="col">lock_at</th>
             <th scope="col">lock after</th>
+            {% endif %}
             <th scope="col">status</th>
+            <th scope="col">notes</th>
+            <!-- <th scope="col">IMG</th> -->
             <th scope="col">التحكم</th>
           </tr>
         </thead>
@@ -130,18 +132,21 @@
             <td>{{ row.name }}</td>
             <td>{{ row.email }}</td>
             <td>{{ row.phone }}</td>
+            {% if session["is_super_user"] %}
             <td>{{ row.page_url }}</td>
-            <td>{{ row.notes }}</td>
             <td>{{ row.create_at }}</td>
             <td>{{ row.lock_at }}</td>
             <td>{{ row.nu_of_days_for_lock }} days</td>
+            {% endif %}
             <td>{{ row.status }}</td>
+            <td>{{ row.notes }}</td>
+            
 
             <td>
               {% if session["is_super_user"] %}
               <a href="{{ url_for('deleterecord', path='company', id= row.id) }}" class="btn btn-link btn-sm" ><i class="fa fa-trash-alt"></i></a>
               {% endif %}
-              <a href="#" class="btn btn-link btn-sm" onclick="editRecord({{ row.id }})" ><i class="fa fa-edit"></i></a>
+              <a href="{{ url_for('updateRecords', path='company', id= row.id) }}" class="btn btn-link btn-sm" ><i class="fa fa-edit"></i></a>
           </td>
           </tr>
           {% endfor %}
@@ -150,7 +155,7 @@
       {% endif %}
 
     </div>
-{% endif %}
+
 
     <div class="group">
       <h3 class="mb-1 text-right">المستخدمين</h3>
@@ -185,6 +190,7 @@
             <input type="radio" checked name="status" value="1"  aria-describedby="textHelp">مفعل
             <input type="radio"  name="status" value="0"  aria-describedby="textHelp">غير مفعل
           </div>
+
 
           <button type="submit" class="btn btn-primary">أضافة</button>
         </form>
@@ -313,7 +319,7 @@
       {% endif %}
 
     </div>
-
+{% endif %}
 
   <div class="group">
     <h3 class="mb-1 text-right">الشعب</h3>

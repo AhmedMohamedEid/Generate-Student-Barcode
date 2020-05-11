@@ -176,10 +176,11 @@ function studentTableRecord(data) {
 function editRecord(value){
 				// value = value.trim(); // remove any spaces around the text
 				if(value != ""){ // don't make requests with an empty string
+          // id = "";
 					$.ajax({
-						url: "company",
+						url: "company/edit/"+ value,
             type:"POST",
-						data: {id: value},
+						data: JSON.stringify (value),
 						dataType: "json",
 						success: function(data){
 							// var res = "";
@@ -187,14 +188,21 @@ function editRecord(value){
 							// for(i=1; i<data.data.length;i++){
 							// 	res += studentTableRecord(data.data);
 							// }
-							// $("#student_table tbody").html(res);
+              for (x in data){
+
+                $("#id05 #exampleInputname04").val(x.name);
+                console.log(data.data.name);
+                console.log(x.name);
+              }
               //
-              // console.log(data.data);
+              console.log(data.data);
+              console.log(data);
               // // console.log(res);
               // console.log(data.data.length);
 						}
 
 					});
+          console.log(value);
 				}
 				else{
 					// $("#results").html(""); // set the results empty in case of empty string

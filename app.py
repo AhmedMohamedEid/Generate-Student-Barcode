@@ -9,11 +9,13 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
 # Database
 # from config import Config
-from sqlalchemy import event, create_engine
+# from config import Config
+from sqlalchemy import event, create_engine, or_, and_
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import scoped_session, sessionmaker
-
 from flask_migrate import Migrate
+from flask_login import LoginManager
+# from flask_uploads import UploadSet, IMAGES, configure_uploads
 
 # from sqlalchemy.exc import IntegrityError
 from sqlalchemy.event import listen
@@ -78,6 +80,8 @@ migrate = Migrate(app, db)
 # engine = create_engine('postgresql://scott:tiger@localhost/mydatabase')
 # migrate = Migrate(app, db)
 
+# images = UploadSet('images', IMAGES)
+# configure_uploads(app, images)
 
 def login_required(f):
     """
@@ -142,14 +146,6 @@ def signup():
 
 
 
-def days_between(d1, d2):
-    d1 = datetime.strptime(d1, "%Y-%m-%d")
-    d2 = datetime.strptime(d2, "%Y-%m-%d")
-    return abs((d2 - d1))
-# class MyForm(FlaskForm):
-#     name = StringField('name', validators=[DataRequired()])
-#     print(name)
-
 @app.route('/login', methods=('GET', 'POST'))
 def login():
 
@@ -161,7 +157,8 @@ def login():
         hash_password = generate_password_hash(password)
         result = Users.query.filter_by(email=email).first()
         print(result.status)
-        #
+
+
         if result:
             if check_password_hash(result.password, password) and result.status == True and result.is_user == True:
                 session["user_id"] = result.id
@@ -251,7 +248,7 @@ def setting():
     if session["is_super_user"]:
         users  =  Users.query.filter(Users.id != session["user_id"]).all()
     else:
-        users  =  Users.query.filter(Users.id != session["user_id"], Users.is_super_user == None).all()
+        users  =  Users.query.filter(Users.id != session["user_id"], or_(Users.is_super_user == False,Users.is_super_user == None)).all()
         print(users)
 
     # rows = {
@@ -281,13 +278,7 @@ def company():
     else:
         return redirect("/logout")
 
-@app.route('/company', methods=["POST"])
-@login_required
-def getCompany():
-    if request.method == 'POST':
-        id = request.json["id"]
-        print(id)
-        return id
+
 @app.route('/adduser', methods=["POST"])
 @login_required
 def users():
@@ -360,6 +351,58 @@ def level():
     db.session.add(level)
     db.session.commit()
     return redirect("/setting")
+
+from io import BytesIO
+# edit For All tables
+@app.route('/event/<int:id>/logo')
+def event_logo(id):
+    company = Company.query.get_or_404(id)
+    return app.response_class(company.image, mimetype='application/octet-stream')
+
+@app.route('/<path:path>/edit/<int:id>', methods=["POST","GET"])
+@login_required
+def updateRecords(path, id):
+    if path == "company" and request.method == 'POST':
+        if id:
+            name = request.form.get("name")
+            email = request.form.get("email")
+            phone = request.form.get("phone")
+            page_url = request.form.get("page_url")
+            notes = request.form.get("notes")
+            nu_of_days_for_lock = request.form.get("nu_of_days_for_lock")
+            status = request.form.get('status')
+            status = True if status == "1" else False
+
+            file = request.files['logo']
+            image_name = file.filename
+            print(image_name)
+            print(file)
+            company = Company.query.get(id)
+            if nu_of_days_for_lock !=None and nu_of_days_for_lock != company.nu_of_days_for_lock:
+                company.lock_at = company.create_at + datetime.timedelta(days=int(nu_of_days_for_lock))
+
+            company.name = name
+            company.email = email
+            company.phone = phone
+            company.page_url = page_url
+            company.notes = notes
+            company.update_at = datetime.datetime.now()
+            if nu_of_days_for_lock !=None and nu_of_days_for_lock != company.nu_of_days_for_lock :
+                company.nu_of_days_for_lock = nu_of_days_for_lock
+            if status !=  None and status != company.status:
+                company.status = status
+            if file:
+                company.image_name = image_name
+                company.image = file.read()
+
+            db.session.merge(company)
+            db.session.commit()
+            return redirect("/setting")
+    elif path == "company":
+        company = Company.query.get(id)
+        return render_template('setting_edite.html', company=company)
+
+
 
 
 def get_users(offset=0, per_page=10):
@@ -460,27 +503,7 @@ def student(id):
     return render_template("student_data.html",student=row,major=major_id,level=level_id )
 
 
-#
-# from sqlalchemy.ext.declarative import DeclarativeMeta
-#
-# class AlchemyEncoder(json.JSONEncoder):
-#
-#     def default(self, obj):
-#         if isinstance(obj.__class__, DeclarativeMeta):
-#             # an SQLAlchemy class
-#             fields = {}
-#             for field in [x for x in dir(obj) if not x.startswith('_') and x != 'metadata']:
-#                 data = obj.__getattribute__(field)
-#                 try:
-#                     json.dumps(data) # this will fail on non-encodable values, like other classes
-#                     fields[field] = data
-#                 except TypeError:
-#                     fields[field] = None
-#             # a json-encodable dict
-#             return fields
-#
-#         return json.JSONEncoder.default(self, obj)
-#
+
 # # c = YourAlchemyClass()
 # # print (json.dumps(c, cls=AlchemyEncoder))
 #

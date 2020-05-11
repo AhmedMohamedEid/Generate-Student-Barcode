@@ -26,6 +26,8 @@ table ,.setting-form form{
 
 .icon{
   margin: 15px auto;
+  max-width: 71%;
+  width: 100%;
 }
 
 .display-barcode{
