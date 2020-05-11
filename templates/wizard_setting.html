@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Settings
+{% endblock %}
+
+{% block body %}
+<!-- Page Content  -->
+{% if company %}
+  <div class="container">
+
+    <div class="m-3 p-3" style="margin:auto">
+      <div class="title form-title">
+        <h2 class="text-center">تسجيل شركة</h2>
+      </div>
+
+      {%- if get_flashed_messages %}
+
+        <div class="messages text-center" style="width: 50%;margin: auto;">
+          {%- for message in get_flashed_messages() %}
+          <div class="alert alert-primary" role="alert">
+            {{ message }}
+          </div>
+            {%- endfor %}
+          <!-- <h1>Successfully DELETE</h1> -->
+        </div>
+      {%- endif %}
+      <div class="setting-form m-3">
+        <form class="p-3" action="{{ url_for('wizard_setting' , path='company') }}" method="post">
+          {{ csrf_token }}
+          <div class="form-group">
+            <label for="exampleInputname07">الاسم</label>
+            <input type="text" class="form-control" name="name" required id="exampleInputname07" aria-describedby="namelHelp">
+          </div>
+          <div class="form-group">
+            <label for="exampleInputEmail07">البريد الالكتروني</label>
+            <input type="email" class="form-control" name="email" required id="exampleInputEmail07" aria-describedby="emaillHelp">
+          </div>
+          <div class="form-group">
+            <label for="exampleInputPhone07">رقم الهاتف</label>
+            <input type="text" class="form-control" name="phone" id="exampleInputPhone07" aria-describedby="passHelp">
+          </div>
+          <div class="form-group">
+            <label for="exampleInputPageUrl07">عنوان الصفحة</label>
+            <input type="text" class="form-control" name="page_url" id="exampleInputPageUrl07" aria-describedby="passHelp">
+          </div>
+
+          <div class="form-group">
+            <label for="exampleInputPageUrl04">الشعار</label>
+            <input type="file" name="logo" id="exampleInputPageUrl04" aria-describedby="passHelp">
+          </div>
+
+          <div class="form-group">
+            <label for="exampleInputnotes07">الوصف</label>
+            <input type="text" class="form-control" name="notes" id="exampleInputnotes07" aria-describedby="passHelp">
+          </div>
+          <div class="form-group">
+            <label for="exampleInputNuDays07">عدد ايام الترخيص</label>
+            <input type="number" class="form-control" name="nu_of_days_for_lock" id="exampleInputNuDays07" aria-describedby="passHelp">
+          </div>
+
+          <button type="submit"  class="btn btn-primary">أضافة</button>
+        </form>
+      </div>
+      <div style="direction: rtl;">
+        <p class="text-center">اريد التسجيل.. <a href="{{ url_for('signup') }}" class="btn btn-link">تسجيل جديد</a></p>
+      </div>
+    </div>
+  </div>
+
+  {% elif users %}
+
+  <div class="container">
+
+    <div class="m-3 p-3" style="margin:auto">
+      <div class="title form-title">
+        <h2 class="text-center">تسجيل مستخدم</h2>
+      </div>
+
+      {%- if get_flashed_messages %}
+
+        <div class="messages text-center" style="width: 50%;margin: auto;">
+          {%- for message in get_flashed_messages() %}
+          <div class="alert alert-primary" role="alert">
+            {{ message }}
+          </div>
+            {%- endfor %}
+          <!-- <h1>Successfully DELETE</h1> -->
+        </div>
+      {%- endif %}
+      <div class="setting-form m-3">
+        <form class="p-3" action="{{ url_for('wizard_setting' , path='users') }}" method="post">
+          {{ csrf_token }}
+          <div class="form-group">
+            <label for="exampleInputcompany3">الشركة</label>
+            <select class="form-control" id="exampleInputcompany3" name="company_id">
+              <option value="0">....</option>
+              {% for row in companys_user %}
+              <option value="{{ row.id }}" {% if users.company_id == row.id %}selected {% endif %}>{{ row.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="exampleInputname3">الاسم</label>
+            <input type="text" class="form-control" value="{{ users.name }}" name="name" required id="exampleInputname3" aria-describedby="namelHelp">
+          </div>
+          <div class="form-group">
+            <label for="exampleInputEmail02">البريد الالكتروني</label>
+            <input type="email" class="form-control" value="{{ users.email }}" name="email" required id="exampleInputEmail02" aria-describedby="emaillHelp">
+          </div>
+          <div class="form-group">
+            <label for="exampleInputPassword02">كلمة المرور</label>
+            <input type="password" class="form-control" name="password" required id="exampleInputPassword02" aria-describedby="passHelp">
+          </div>
+          <div class="form-group">
+            <label for="exampleInputisAdmin02">مدير؟ : </label>
+            <input type="radio" {% if users.is_admin == 1 %} checked {% endif %} name="is_admin" value="1"  aria-describedby="textHelp">نعم
+            <input type="radio" {% if users.is_admin == 0 %} checked {% endif %} name="is_admin" value="0"  aria-describedby="textHelp">لا
+          </div>
+          <div class="form-group">
+            <label for="exampleInputisuser02">مستخدم : </label>
+            <input type="radio" {% if users.is_user == 1 %} checked {% endif %}  name="is_user" value="1" aria-describedby="textHelp">نعم
+            <input type="radio" {% if users.is_user == 0 %} checked {% endif %} name="is_user" value="0"  aria-describedby="textHelp">لا
+          </div>
+          <div class="form-group">
+            <label for="exampleInputstatus02">الحالة : </label>
+            <input type="radio" {% if users.status == 1 %} checked {% endif %} name="status" value="1"  aria-describedby="textHelp">مفعل
+            <input type="radio" {% if users.status == 0 %} checked {% endif %} name="status" value="0"  aria-describedby="textHelp">غير مفعل
+          </div>
+
+
+          <button type="submit" class="btn btn-info">حفظ</button>
+          <a href="{{url_for('setting')}}" class="btn btn-danger">ألفاء</a>
+        </form>
+      </div>
+      <div style="direction: rtl;">
+        <p class="text-center">اريد التسجيل.. <a href="{{ url_for('signup') }}" class="btn btn-link">تسجيل جديد</a></p>
+      </div>
+    </div>
+  </div>
+
+  {% endif %}
+{% endblock %}
