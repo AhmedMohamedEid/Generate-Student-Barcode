@@ -19,35 +19,186 @@
       </div>
     {%- endif %}
 
+{% if session["is_super_user"] or session["is_admin"] %}
     <div class="group">
-      <h3 class="mb-1 text-right">المستخدمين</h3>
-      {% if not users %}
+      <h3 class="mb-1 text-right">الشركة</h3>
+      {% if not company and session["is_super_user"] %}
       <div class="setting-form m-3">
-        <form class="p-3" action="{{ url_for('major') }}" method="post">
+        <form class="p-3" action="{{ url_for('company') }}" method="post">
           {{ csrf_token }}
           <div class="form-group">
-            <label for="exampleInputName">الاسم</label>
-            <input type="text" class="form-control" name="name" required id="exampleInputName" aria-describedby="namelHelp">
-            <!-- <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small> -->
+            <label for="exampleInputname04">الاسم</label>
+            <input type="text" class="form-control" name="name" required id="exampleInputname04" aria-describedby="namelHelp">
           </div>
           <div class="form-group">
-            <label for="exampleInputNotes1">ملاحظات</label>
-            <input type="text" class="form-control" name="name" id="exampleInputNotes1" aria-describedby="notesHelp">
-            <!-- <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small> -->
+            <label for="exampleInputEmail04">البريد الالكتروني</label>
+            <input type="email" class="form-control" name="email" required id="exampleInputEmail04" aria-describedby="emaillHelp">
+          </div>
+          <div class="form-group">
+            <label for="exampleInputPhone04">رقم الهاتف</label>
+            <input type="text" class="form-control" name="phone" id="exampleInputPhone04" aria-describedby="passHelp">
+          </div>
+          <div class="form-group">
+            <label for="exampleInputPageUrl04">عنوان الصفحة</label>
+            <input type="text" class="form-control" name="page_url" id="exampleInputPageUrl04" aria-describedby="passHelp">
+          </div>
+
+          <div class="form-group">
+            <label for="exampleInputnotes04">الوصف</label>
+            <input type="text" class="form-control" name="notes" id="exampleInputnotes04" aria-describedby="passHelp">
+          </div>
+          <div class="form-group">
+            <label for="exampleInputNuDays04">عدد ايام الترخيص</label>
+            <input type="number" class="form-control" name="nu_of_days_for_lock" id="exampleInputNuDays04" aria-describedby="passHelp">
           </div>
           <button type="submit" class="btn btn-primary">أضافة</button>
         </form>
       </div>
       {% else %}
-
-        <button class="btn btn-info btn-sm m-2" onclick="document.getElementById('id02').style.display='block'"><i class="fa fa-plus"></i></button>
+        {% if session["is_super_user"] %}
+        <button class="btn btn-info btn-sm m-2" onclick="document.getElementById('id04').style.display='block'"><i class="fa fa-plus"></i></button>
         <div id="button_major_control" style="display:none">
           <button class="btn btn-danger btn-sm m-2" ><i class="fa fa-trash-alt"></i></button>
           <button class="btn btn-success btn-sm m-2" ><i class="fa fa-edit"></i></button>
         </div>
 
-          <div id="id02" class="modal">
-            <span onclick="document.getElementById('id02').style.display='none'" class="close" title="Close Modal">&times;</span>
+          <div id="id04" class="modal">
+            <span onclick="document.getElementById('id04').style.display='none'" class="close" title="Close Modal">&times;</span>
+            <form class="modal-content" method="POST" action="{{ url_for('company') }}">
+              <div class="container">
+                <h2 class="text-center">أضافة شركة </h2>
+                  {{ csrf_token }}
+
+                  <div class="form-group">
+                    <label for="exampleInputname04">الاسم</label>
+                    <input type="text" class="form-control" name="name" required id="exampleInputname04" aria-describedby="namelHelp">
+                  </div>
+                  <div class="form-group">
+                    <label for="exampleInputEmail04">البريد الالكتروني</label>
+                    <input type="email" class="form-control" name="email" required id="exampleInputEmail04" aria-describedby="emaillHelp">
+                  </div>
+                  <div class="form-group">
+                    <label for="exampleInputPhone04">رقم الهاتف</label>
+                    <input type="text" class="form-control" name="phone" id="exampleInputPhone04" aria-describedby="passHelp">
+                  </div>
+                  <div class="form-group">
+                    <label for="exampleInputPageUrl04">عنوان الصفحة</label>
+                    <input type="text" class="form-control" name="page_url" id="exampleInputPageUrl04" aria-describedby="passHelp">
+                  </div>
+
+                  <div class="form-group">
+                    <label for="exampleInputnotes04">الوصف</label>
+                    <input type="text" class="form-control" name="notes" id="exampleInputnotes04" aria-describedby="passHelp">
+                  </div>
+                  <div class="form-group">
+                    <label for="exampleInputNuDays04">عدد ايام الترخيص</label>
+                    <input type="number" class="form-control" name="nu_of_days_for_lock" id="exampleInputNuDays04" aria-describedby="passHelp">
+                  </div>
+
+                <div class="clearfix">
+                  <button type="submit"  class="btn btn-info">أضافة</button>
+                  <button type="button" onclick="document.getElementById('id04').style.display='none'" class="btn btn-danger">ألغاء</button>
+                </div>
+              </div>
+            </form>
+          </div>
+          {% endif %}
+
+
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">الاسم</th>
+            <th scope="col">البريد الالكتروني</th>
+            <th scope="col">phone</th>
+            <!-- {% if session["is_super_user"] %} -->
+            <th scope="col">page_url</th>
+            <!-- {% endif %} -->
+            <th scope="col">notes</th>
+            <th scope="col">create_at</th>
+            <th scope="col">lock_at</th>
+            <th scope="col">lock after</th>
+            <th scope="col">status</th>
+            <th scope="col">التحكم</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in company %}
+          <tr>
+            <th scope="row">{{ loop.index }}</th>
+            <td>{{ row.name }}</td>
+            <td>{{ row.email }}</td>
+            <td>{{ row.phone }}</td>
+            <td>{{ row.page_url }}</td>
+            <td>{{ row.notes }}</td>
+            <td>{{ row.create_at }}</td>
+            <td>{{ row.lock_at }}</td>
+            <td>{{ row.nu_of_days_for_lock }} days</td>
+            <td>{{ row.status }}</td>
+
+            <td>
+              {% if session["is_super_user"] %}
+              <a href="{{ url_for('deleterecord', path='company', id= row.id) }}" class="btn btn-link btn-sm" ><i class="fa fa-trash-alt"></i></a>
+              {% endif %}
+              <a href="#" class="btn btn-link btn-sm" onclick="editRecord({{ row.id }})" ><i class="fa fa-edit"></i></a>
+          </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% endif %}
+
+    </div>
+{% endif %}
+
+    <div class="group">
+      <h3 class="mb-1 text-right">المستخدمين</h3>
+      {% if not users %}
+      <div class="setting-form m-3">
+        <form class="p-3" action="{{ url_for('users') }}" method="post">
+          {{ csrf_token }}
+          <div class="form-group">
+            <label for="exampleInputname3">الاسم</label>
+            <input type="text" class="form-control" name="name" required id="exampleInputname3" aria-describedby="namelHelp">
+          </div>
+          <div class="form-group">
+            <label for="exampleInputEmail02">البريد الالكتروني</label>
+            <input type="email" class="form-control" name="email" required id="exampleInputEmail02" aria-describedby="emaillHelp">
+          </div>
+          <div class="form-group">
+            <label for="exampleInputPassword02">كلمة المرور</label>
+            <input type="password" class="form-control" name="password" required id="exampleInputPassword02" aria-describedby="passHelp">
+          </div>
+          <div class="form-group">
+            <label for="exampleInputisAdmin02">مدير؟ : </label>
+            <input type="radio"  name="is_admin" value="1"  aria-describedby="textHelp">نعم
+            <input type="radio" checked name="is_admin" value="0"  aria-describedby="textHelp">لا
+          </div>
+          <div class="form-group">
+            <label for="exampleInputisuser02">مستخدم : </label>
+            <input type="radio"  name="is_user" value="1" aria-describedby="textHelp">نعم
+            <input type="radio" checked name="is_user" value="0"  aria-describedby="textHelp">لا
+          </div>
+          <div class="form-group">
+            <label for="exampleInputstatus02">الحالة : </label>
+            <input type="radio" checked name="status" value="1"  aria-describedby="textHelp">مفعل
+            <input type="radio"  name="status" value="0"  aria-describedby="textHelp">غير مفعل
+          </div>
+
+          <button type="submit" class="btn btn-primary">أضافة</button>
+        </form>
+      </div>
+      {% else %}
+
+        <button class="btn btn-info btn-sm m-2" onclick="document.getElementById('id03').style.display='block'"><i class="fa fa-plus"></i></button>
+        <div id="button_major_control" style="display:none">
+          <button class="btn btn-danger btn-sm m-2" ><i class="fa fa-trash-alt"></i></button>
+          <button class="btn btn-success btn-sm m-2" ><i class="fa fa-edit"></i></button>
+        </div>
+
+          <div id="id03" class="modal">
+            <span onclick="document.getElementById('id03').style.display='none'" class="close" title="Close Modal">&times;</span>
             <form class="modal-content" method="POST" action="{{ url_for('users') }}">
               <div class="container">
                 <h2 class="text-center">أضافة مستخدم جديد</h2>
@@ -83,7 +234,7 @@
 
                 <div class="clearfix">
                   <button type="submit"  class="btn btn-info">أضافة</button>
-                  <button type="button" onclick="document.getElementById('id02').style.display='none'" class="btn btn-danger">ألغاء</button>
+                  <button type="button" onclick="document.getElementById('id03').style.display='none'" class="btn btn-danger">ألغاء</button>
                 </div>
               </div>
             </form>
@@ -110,7 +261,7 @@
         <tbody>
           {% for row in users %}
           <tr>
-            <th scope="row">{{ row.id }}</th>
+            <th scope="row">{{ loop.index }}</th>
             <td>{{ row.name }}</td>
             <td>{{ row.email }}</td>
             <td>
@@ -229,7 +380,7 @@
       <tbody>
         {% for row in majors %}
         <tr>
-          <th scope="row">{{ row.id }}</th>
+          <th scope="row">{{ loop.index }}</th>
           <td>{{ row.name }}</td>
           <!-- <td></td> -->
           <td>{{ row.notes }}</td>
@@ -312,7 +463,7 @@
         {% for row in levels %}
         <tr>
           <!-- <td><input type="checkbox" name="level" onClick="showButtons('level','button_level_control')" value="{{ row.id }}" style="height: .9em;width: .9em;"></td> -->
-          <th scope="row">{{ row.id }}</th>
+          <th scope="row">{{ loop.index }}</th>
           <td>{{ row.name }}</td>
           <td>{{ row.notes }}</td>
           <td>

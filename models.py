@@ -56,17 +56,17 @@ class Company(db.Model):
     name = db.Column(db.String(80), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     phone = db.Column(db.String(120), nullable=False)
+    page_url = db.Column(db.String(120), nullable=False)
     logo = db.Column(db.LargeBinary)
     notes = db.Column(db.String(250), nullable=False)
     create_at = db.Column(db.DateTime, nullable=False,default=datetime.utcnow)
     update_at = db.Column(db.DateTime, nullable=True)
 
+    lock_at = db.Column(db.DateTime, nullable=True)
+    nu_of_days_for_lock = db.Column(db.Integer, nullable=True)
+    status = db.Column(db.Boolean, default=True, nullable=True)
 
-    def __init__(self, name,email,phone,notes):
-        self.name
-        self.email
-        self.phone
-        self.notes
+
     def __repr__(self):
         return ("<Company| name : {}, email: {}".format(self.name,self.email))
 

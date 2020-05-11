@@ -19,11 +19,12 @@ from flask_migrate import Migrate
 from sqlalchemy.event import listen
 from werkzeug import secure_filename
 import time
+import datetime
 import json
 import barcode, random
 from barcode.writer import ImageWriter
 
-from models import Users,Students, Levels, Majors, Subjects
+from models import Users,Students, Levels, Majors, Subjects, Company
 
 # from flask_wtf import FlaskForm
 # from wtforms import StringField
@@ -58,6 +59,7 @@ Session(app)
 
 # app.config.from_object(os.environ['APP_SETTINGS'])
 # app.config.from_object(Config)
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:123456789@localhost:5432/student_barcode"
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
@@ -161,7 +163,7 @@ def login():
         print(result.status)
         #
         if result:
-            if check_password_hash(result.password, password) and result.status == True:
+            if check_password_hash(result.password, password) and result.status == True and result.is_user == True:
                 session["user_id"] = result.id
                 session["user_name"] = result.name
                 session["is_super_user"] = result.is_super_user
@@ -243,8 +245,9 @@ def logout():
 @app.route('/setting')
 @login_required
 def setting():
-    majors =  Majors.query.all(),
-    levels =  Levels.query.all(),
+    majors =  Majors.query.all()
+    levels =  Levels.query.all()
+    company = Company.query.all()
     if session["is_super_user"]:
         users  =  Users.query.filter(Users.id != session["user_id"]).all()
     else:
@@ -254,8 +257,37 @@ def setting():
     # rows = {
     #     levels: levels[0],
     # }
-    return render_template('setting.html', users=users, levels=levels[0], majors=majors[0])
+    return render_template('setting.html', company=company,users=users, levels=levels, majors=majors)
 
+@app.route('/addcompany', methods=["POST"])
+@login_required
+def company():
+    if request.method == "POST":
+        name = request.form.get("name")
+        email = request.form.get("email")
+        phone = request.form.get("phone")
+        page_url = request.form.get("page_url")
+        notes = request.form.get("notes")
+        nu_of_days_for_lock = request.form.get("nu_of_days_for_lock")
+
+        lock_at = datetime.datetime.now() + datetime.timedelta(days=int(nu_of_days_for_lock))
+
+        res = Company(name=name, email=email, phone=phone, page_url=page_url,notes=notes,nu_of_days_for_lock=nu_of_days_for_lock,lock_at=lock_at)
+        db.session.add(res)
+        db.session.merge(res)
+        db.session.commit()
+        flash("تم الاضافة بنجاح")
+        return redirect("/setting")
+    else:
+        return redirect("/logout")
+
+@app.route('/company', methods=["POST"])
+@login_required
+def getCompany():
+    if request.method == 'POST':
+        id = request.json["id"]
+        print(id)
+        return id
 @app.route('/adduser', methods=["POST"])
 @login_required
 def users():
@@ -266,31 +298,29 @@ def users():
         is_admin = request.form.get("is_admin")
         is_user = request.form.get("is_user")
         status = request.form.get("status")
-        if is_admin == "1":
+
+        is_admin = True if is_admin == "1" else False
+
+        is_user = True if is_user == "1" else False
+
+        status = True if status == "1" else False
+
+        check_count = db.session.query(Users).count()
+        is_super_user = True if check_count == 0 else False
+        if is_super_user:
             is_admin = True
-        else:
-            is_admin = False
-
-        if is_user == "1":
+        if is_admin:
             is_user = True
-        else:
-            is_user = False
 
-        if status == "1":
-            status = True
-        else:
-            status = False
-
-        print(is_user)
         check_email = db.session.query(db.exists().where(Users.email == email)).scalar()
         if not check_email:
-            user = Users(name=username,username=username,email=email,password=password, is_admin=is_admin, is_user=is_user, status=status)
+            user = Users(name=username,username=username,email=email,password=password,is_super_user=is_super_user, is_admin=is_admin, is_user=is_user, status=status)
             db.session.add(user)
             db.session.commit()
         flash("تم أضافة المستخدم بنجاح!")
         return redirect("/setting")
     else:
-        flash("Error!")
+        flash("خطأ")
         return redirect("/setting")
 
 
@@ -531,6 +561,13 @@ def deleterecord(path,id):
         user = Users.query.filter_by(id=id).first()
         merge_user = db.session.merge(user)
         db.session.delete(merge_user)
+        db.session.commit()
+        flash('Successfully Delete')
+        return redirect(url_for('setting'))
+    elif path == 'company':
+        company = Company.query.filter_by(id=id).first()
+        merge_company = db.session.merge(company)
+        db.session.delete(merge_company)
         db.session.commit()
         flash('Successfully Delete')
         return redirect(url_for('setting'))

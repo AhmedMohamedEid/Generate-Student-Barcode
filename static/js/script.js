@@ -173,24 +173,25 @@ function studentTableRecord(data) {
   `;
 }
 
-function liveSearch(value){
-				value = value.trim(); // remove any spaces around the text
+function editRecord(value){
+				// value = value.trim(); // remove any spaces around the text
 				if(value != ""){ // don't make requests with an empty string
 					$.ajax({
-						url: "search",
-						data: {searchText: value},
+						url: "company",
+            type:"POST",
+						data: {id: value},
 						dataType: "json",
 						success: function(data){
-							var res = "";
-							// // create the html with results
-							for(i=1; i<data.data.length;i++){
-								res += studentTableRecord(data.data);
-							}
-							$("#student_table tbody").html(res);
-
-              console.log(data.data);
-              // console.log(res);
-              console.log(data.data.length);
+							// var res = "";
+							// // // create the html with results
+							// for(i=1; i<data.data.length;i++){
+							// 	res += studentTableRecord(data.data);
+							// }
+							// $("#student_table tbody").html(res);
+              //
+              // console.log(data.data);
+              // // console.log(res);
+              // console.log(data.data.length);
 						}
 
 					});
