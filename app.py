@@ -783,7 +783,18 @@ def generate_word_file(id):
 #                 ean = EAN(u"{}".format(num),  writer=ImageWriter())
 #                 fullname = ean.save(u'{}-{}'.format(num,name), text=name)
 #     return redirect(url_for("index"))
-#
+
+@app.route('/event/<int:id>/barcode')
+def event_barcode(id):
+    student = Students.query.get_or_404(id)
+    print(student)
+    return app.response_class(student.image, mimetype='image/svg+xml')
+
+@app.route('/download/<int:id>/barcode')
+def download_barcode(id):
+    student = Students.query.get_or_404(id)
+    return send_file(BytesIO(student.image), attachment_filename=student.image_name, as_attachment=True)
+
 @app.route("/generate_svg", methods=["GET", "POST"])
 def generate_svg():
     if request.method == "POST":
@@ -814,10 +825,15 @@ def generate_svg():
                 filenum = random.randrange(1,1000)
                 fullname = ean.save(u'{}-{}'.format(num,filenum), text=name)
                 path = "barcode_path/{}-{}.svg".format(num,filenum)
+
                 st_img_path = Students.query.get(row.id)
                 st_img_path.barcode_path = path
                 print(st_img_path.barcode_path)
-                print(time.strftime('%A %B, %d %Y %H:%M:%S'))
+
+                img_file = open("{}-{}.svg".format(num,filenum), 'rb')
+                print(img_file)
+                st_img_path.image_name = "{}-{}.svg".format(num,filenum)
+                st_img_path.image = img_file.read()
                 st_img_path.update_at = time.strftime('%A %B, %d %Y %H:%M:%S')
                 print(fullname)
                 db.session.merge(st_img_path)

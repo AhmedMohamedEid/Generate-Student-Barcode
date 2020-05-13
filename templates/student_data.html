@@ -14,9 +14,9 @@
 <div class="row">
   <div class="col-md-5">
     {% if student.barcode_path %}
-    <img src="{{ url_for('static', filename=student.barcode_path ) }}" alt="{{ student.name }}" class="img-thumbnail" style="width:100%" title="{{ student.un_id }}-{{ student.name }}">
+    <img src="{{ url_for('event_barcode', id=student.id) }}" alt="{{ student.name }}" class="img-thumbnail" style="width:100%" title="{{ student.un_id }}-{{ student.name }}">
     <a href="#" class="btn btn-info m-2" name="button" title="Print Barcode"><i class="fas fa-print"></i></a>
-    <a href="#" class="btn btn-info m-2" name="button" title="Print Barcode"><i class="fas fa-file-download"></i></a>
+    <a href="{{ url_for('download_barcode', id=student.id) }}" class="btn btn-info m-2" name="button" title="Print Barcode"><i class="fas fa-file-download"></i></a>
 
     {% else %}
     <img src="{{ url_for('static', filename='image/icon.png' ) }}" alt="Barcode not Generated" class="img-thumbnail">
@@ -33,8 +33,8 @@
       <ul class="list-group list-group-flush">
         <li class="list-group-item"><strong>الكود الجامعي :</strong> {{ student.un_id }}</li>
         <li class="list-group-item"><strong>الشعبة :</strong> {{ major.name }}</li>
-        <li class="list-group-item"><strong>الفرقة</strong> {{ level.name }}</li>
-        <li class="list-group-item"><strong>المواد الدراسية :</strong> </li>
+        <li class="list-group-item"><strong>الفرقة :</strong> {{ level.name }}</li>
+        <li class="list-group-item"><strong>المواد الدراسية :</strong> {{ student.subjects }}</li>
       </ul>
     </div>
   </div>

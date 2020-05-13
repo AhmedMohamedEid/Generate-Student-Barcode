@@ -18,7 +18,7 @@
         <div class="inner-form">
           <div class="basic-search">
             <div class="input-field">
-              <input id="search" type="text" name="search_data" autofocus placeholder="بحث .." />
+              <input id="search" type="text" {% if search_val %}value="{{ search_val }}"{% endif%} name="search_data" autofocus placeholder="بحث .." />
               <!-- <input type="text" name="" value=""> -->
               <div class="icon-wrap">
                 <button type="submit" class="btn btn-light" id="search_btn">
@@ -69,45 +69,6 @@
 
 
     <div class="row">
-      <!-- <div class="table-control m-2" style="position:relative;display:-webkit-inline-box;">
-        <div>
-          <button type="button" id="filter_button"  class="btn btn-light" name="button"><i class="fas fa-filter fa-sm"></i> Filter</button>
-
-          <div class="ml-1">
-           <div class="pagination-info">
-             {{ pagination.info }}
-           </div>
-           <div class="toggle-view p-2">
-             <button type="button" id="list_view" onclick="viewList()" class="btn btn-outline-dark btn-sm"><i class="fas fa-list-ul"></i></button>
-             <button type="button" id="card_view" onclick="viewCard()" class="btn btn-outline-dark btn-sm"><i class="fas fa-barcode"></i></button>
-           </div>
-         </div>
-        </div>
-
-
-
-        <div class="form_filter m-1" id="filter_form">
-          <form class="form-inline">
-            <select class="custom-select my-1 mr-sm-2" name="major">
-              <option value="0">......</option>
-              {% for row in majors  %}
-              <option value="{{ row.id }}">{{ row.name }}</option>
-              {% endfor %}
-            </select>
-
-            <select class="custom-select my-1 mr-sm-2" name="level">
-              <option value="0">......</option>
-              {% for row in levels %}
-              <option value="{{ row.id }}">{{ row.name }}</option>
-              {% endfor %}
-            </select>
-
-            <button type="submit" class="btn btn-primary mb-2 btn-sm">Search</button>
-          </form>
-        </div>
-
-
-      </div> -->
 
       <form action="{{ url_for('delete_all') }}" method="post">
         <button class="btn btn-danger btn-sm" title="Delete All" type="submit" style="cursor: pointer;" name="delete_all"><i class="fas fa-trash-alt" ></i></button>
@@ -151,16 +112,21 @@
                   <td>{{ x.level }}</td>
                 {% endif %}
               {% endfor %}
-              {% if row.barcode_path %}
-              <td><img src="{{ url_for('static', filename=row.barcode_path) }}" alt="{{ row.name }}" style="height:34%" title="{{ row.un_id }}-{{ row.name }}"></td>
+              {% if row.image %}
+              <td>
+                <i class="fa fa-check"></i>
+                <!-- <img src="{{ url_for('static', filename=row.barcode_path) }}" alt="{{ row.name }}" style="height:34%" title="{{ row.un_id }}-{{ row.name }}"> -->
+              </td>
               {% else %}
-              <td>-</td>
+              <td><i class="fas fa-times"></i></td>
               {% endif %}
               <td>
 
                 <a href="{{ url_for('generate_word_file', id=row.id) }}" class="btn btn-light text-info btn-sm" title="Generate Word File for student data." type="submit" style="cursor: pointer;" name="delete_all"><i class="fas fa-file-word"></i></a>
                 <a href="{{ url_for('generate_word_file', id=row.id) }}" class="btn btn-light text-danger btn-sm" title="Generate PDF File for student data." type="submit" style="cursor: pointer;" name="delete_all"><i class="fas fa-file-pdf"></i></a>
-                <a href="#"class="btn btn-light text-success btn-sm"  download><span><i class="fas fa-image"></i></span></a>
+                {% if  row.image %}
+                <a href="{{ url_for('download_barcode', id=row.id) }}"class="btn btn-light text-success btn-sm" download><span><i class="fas fa-image"></i></span></a>
+                {%endif%}
               </td>
             </tr>
             {% endfor %}
