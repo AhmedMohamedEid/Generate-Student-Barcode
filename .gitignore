@@ -1,4 +1,6 @@
 migrations/
+barcode_path/
+flask_session/
 *.pyc
 .idea/
 __pycache__/
