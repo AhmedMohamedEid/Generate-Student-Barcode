@@ -99,6 +99,16 @@ def login_required(f):
     return decorated_function
 
 
+@app.before_request
+def before_request_fun():
+
+    session.permanent = True
+    app.permanent_session_lifetime = datetime.timedelta(minutes=20)
+    session.modified = True
+
+    # flash("Please Trye Login again!")
+
+
 
 # second solution
 @event.listens_for(Users.__table__, 'after_create')
