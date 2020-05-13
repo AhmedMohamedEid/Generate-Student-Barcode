@@ -35,17 +35,7 @@ class Users(UserMixin,db.Model):
         """Check hashed password."""
         return check_password_hash(self.password, password)
 
-    # def __init__(self, name,username,email,password,update_at,last_login,is_super_user,is_admin,is_user,status):
-    #     self.name = name
-    #     self.username = username
-    #     self.email = email
-    #     self.password = password
-    #     self.update_at = update_at
-    #     self.last_login = last_login
-    #     self.is_super_user = is_super_user
-    #     self.is_admin = is_admin
-    #     self.is_user = is_user
-    #     self.status = status
+
 
     def __repr__(self):
         return ("<User {}- email {}.>".format(self.name,self.email))
@@ -92,7 +82,7 @@ class Majors(db.Model):
     create_at = db.Column(db.DateTime, nullable=False,default=datetime.utcnow)
     update_at = db.Column(db.DateTime, nullable=True)
 
-    student = db.relationship('Students', backref='majors', lazy=True ,cascade="all,delete")
+    student = db.relationship('Students', backref='major', lazy=True ,cascade="all,delete")
     def __repr__(self):
         return ("<Majors| name : {}".format(self.name))
 
@@ -140,9 +130,11 @@ class Students(db.Model):
 
     major_id = db.Column(db.Integer, db.ForeignKey('major.id'),nullable=False)
     level_id = db.Column(db.Integer, db.ForeignKey('level.id'),nullable=False)
-    image = db.Column(db.LargeBinary, nullable = True)
+    image_name = db.Column(db.String(120), nullable=True)
+    image = db.Column(db.LargeBinary)
     barcode_path = db.Column(db.String(200), nullable=True)
 
+    subjects = db.Column(db.String(250), nullable=True)
 
     def __repr__(self):
         return ("<Students| name : {}".format(self.name))

@@ -26,6 +26,8 @@ import json
 import barcode, random
 from barcode.writer import ImageWriter
 
+from io import BytesIO
+
 from models import Users,Students, Levels, Majors, Subjects, Company
 
 # from flask_wtf import FlaskForm
@@ -419,7 +421,7 @@ def level():
     db.session.commit()
     return redirect("/setting")
 
-from io import BytesIO
+
 # edit For All tables
 @app.route('/event/<int:id>/logo')
 def event_logo(id):
@@ -577,11 +579,11 @@ def student_upload_data():
         file = open(file.filename)
         students = csv.reader(file)
 
-        for ui_code,name in students:
-            students = Students(name=name,un_id=ui_code,major_id=major,level_id=level)
+        for ui_code,name,subjects in students:
+            students = Students(name=name,un_id=ui_code,major_id=major,level_id=level,subjects=subjects)
             db.session.add(students)
         db.session.commit()
-        print(file)
+        # print(file)
     return redirect(url_for("index"))
 
     # else:
@@ -691,7 +693,7 @@ def search():
         pagination = Pagination(page=page, css_framework="bootstrap4",total=len(result), record_name='rows')
         # print(pagination)
 
-        return render_template("student.html", pagination=pagination ,rows=rowss,major_level=major_level_dec,majors=majors,levels=levels )
+        return render_template("student.html", pagination=pagination, search_val=text,rows=rowss,major_level=major_level_dec,majors=majors,levels=levels )
 
 
 @app.route("/delete/<path:path>/<int:id>")
@@ -751,10 +753,10 @@ def generate_word_file(id):
     major.alignment = WD_ALIGN_PARAGRAPH.RIGHT
     level = document.add_paragraph('الفرقة : {}'.format(level_id.name))
     level.alignment = WD_ALIGN_PARAGRAPH.RIGHT
-    subjects = document.add_paragraph('المواد الدراسية : ')
+    subjects = document.add_paragraph('المواد الدراسية : {}'.format(row.subjects))
     subjects.alignment = WD_ALIGN_PARAGRAPH.RIGHT
 
-    document.add_picture('icon.png', width=Inches(1.25))
+    document.add_picture(BytesIO(row.image), width=Inches(1.25))
     #
     # table = document.add_table(row =3, cols= 3)
     # table.direction = WD_TABLE_DIRECTION.RTL
