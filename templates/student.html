@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block title %}
-    All Students
+    الطلاب
 {% endblock %}
 
 {% block body %}
@@ -122,7 +122,7 @@
               {% endif %}
               <td>
 
-                <a href="{{ url_for('generate_word_file', id=row.id) }}" class="btn btn-light text-info btn-sm" title="Generate Word File for student data." type="submit" style="cursor: pointer;" name="delete_all"><i class="fas fa-file-word"></i></a>
+                <a href="{{ url_for('generate_word_file', id=row.id) }}" class="btn btn-light text-info btn-sm" download title="Generate Word File for student data." type="submit" style="cursor: pointer;" name="delete_all"><i class="fas fa-file-word"></i></a>
                 <a href="{{ url_for('generate_word_file', id=row.id) }}" class="btn btn-light text-danger btn-sm" title="Generate PDF File for student data." type="submit" style="cursor: pointer;" name="delete_all"><i class="fas fa-file-pdf"></i></a>
                 {% if  row.image %}
                 <a href="{{ url_for('download_barcode', id=row.id) }}"class="btn btn-light text-success btn-sm" download><span><i class="fas fa-image"></i></span></a>

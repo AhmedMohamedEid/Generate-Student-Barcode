@@ -1,6 +1,6 @@
 
 import csv
-import os
+import os, shutil
 
 from flask import Flask, session,send_file,render_template,redirect,flash, request, url_for,jsonify, Response
 from flask_session import Session
@@ -299,10 +299,15 @@ def login():
         else:
             return redirect(url_for('wizard_setting', path="company"))
 
+
+
 @app.route("/logout")
 @login_required
 def logout():
-    # logout_user()
+    # Check if word_path file is exists or no if exists delete it
+    if os.path.isdir('word_path/'):
+        shutil.rmtree('word_path/')
+
     session.clear()
     return redirect('/login')
 
@@ -728,6 +733,12 @@ def deleterecord(path,id):
         flash('Successfully Delete')
         return redirect(url_for('setting'))
 
+
+def download(name):
+    file = open(name, 'rb')
+    print(file)
+    return send_file(file.read(),mimetype='text/*', attachment_filename="demo", as_attachment=True)
+
 # Generate Word File
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.enum.table import WD_TABLE_DIRECTION
@@ -737,6 +748,7 @@ from docx.enum.text import WD_ALIGN_PARAGRAPH
 @login_required
 @app.route("/generate_word_file/<int:id>")
 def generate_word_file(id):
+
     # style.paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.RIGHT
     row = Students.query.get(id)
     major_id =  Majors.query.get(row.major_id)
@@ -756,16 +768,25 @@ def generate_word_file(id):
     subjects = document.add_paragraph('المواد الدراسية : {}'.format(row.subjects))
     subjects.alignment = WD_ALIGN_PARAGRAPH.RIGHT
 
-    document.add_picture(BytesIO(row.image), width=Inches(1.25))
+    document.add_picture('icon.png', width=Inches(1.25))
     #
     # table = document.add_table(row =3, cols= 3)
     # table.direction = WD_TABLE_DIRECTION.RTL
+    word_path = "word_path"
+    try:
+        os.makedirs(word_path)
+
+    except OSError:
+        print ("Creation of the directory %s failed" % word_path)
+    else:
+        print ("Successfully created the directory %s " % word_path)
+    os.chdir(word_path)
 
     document.add_page_break()
     path = document.save('demo-{}.docx'.format(row.un_id))
-    print(path)
-    return redirect(url_for('all_student'))
-    # return send_file(path, as_attachment=True, attachment_filename="demo.docx")
+    os.chdir("../")
+    file_name = 'demo-{}.docx'.format(row.un_id)
+    return send_file(word_path+"/"+file_name, mimetype='application/vnd.openxmlformats-officedocument.wordprocessingml.document', attachment_filename=file_name, as_attachment=True)
 
 #
 # @app.route("/generate_png", methods=["GET", "POST"])
@@ -800,9 +821,9 @@ def generate_svg():
     if request.method == "POST":
         # num = random.randrange(1,00)
         path = ""
-        rows = Students.query.filter(Students.barcode_path == None).all()
+        rows = Students.query.filter(Students.image == None).all()
         # rows = db.execute("SELECT * FROM student WHERE barcode_path IS NULL;").fetchall()
-        print(rows)
+        # print(rows)
         barcode_path = "static/barcode_path"
         try:
             os.makedirs(barcode_path)
@@ -838,6 +859,7 @@ def generate_svg():
                 print(fullname)
                 db.session.merge(st_img_path)
                 db.session.commit()
+            os.chdir("../../")
     return redirect(url_for("all_student"))
 #
 #
