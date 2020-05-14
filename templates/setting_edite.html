@@ -88,7 +88,12 @@
             <label for="exampleInputEmail02">البريد الالكتروني</label>
             <input type="email" class="form-control" value="{{ users.email }}" name="email" required id="exampleInputEmail02" aria-describedby="emaillHelp">
           </div>
-
+          {% if session["is_super_user"] and session["is_admin"] %}
+          <div class="form-group">
+            <label for="exampleInputPassword05">كلمة المرور</label>
+            <input type="password" class="form-control" name="password" id="exampleInputPassword05" placeholder="تغيير كلمة المرور" aria-describedby="passHelp">
+          </div>
+          {% endif %}
           <div class="form-group">
             <label for="exampleInputisAdmin02">مدير؟ : </label>
             <input type="radio" {% if users.is_admin == 1 %} checked {% endif %} name="is_admin" value="1"  aria-describedby="textHelp">نعم

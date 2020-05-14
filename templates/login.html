@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block title %}
-    Login
+    تسجيل الدخول
 {% endblock %}
 
 {% block body %}
@@ -9,7 +9,7 @@
   <div class="title">
     <h1 class="text-center">
       <!-- <img class="icon" src="{{  url_for('static', filename='image/icon1.png') }}" width="100px" height="100px" title="Barcode Logo" alt="Barcode Logo"> -->
-      <img class="p-2" src="{{ url_for('event_logo', id=2) }}" style="margin: 15px auto;" title="Barcode Logo" alt="Barcode Logo">
+      <img class="p-2" src="{{ url_for('event_logo', id=company.id) }}" style="margin: 15px auto;" title="Barcode Logo" alt="Barcode Logo">
     </h1>
   </div>
   <div class="m-3 p-3" style="margin:auto">
@@ -25,9 +25,9 @@
           {{ message }}
         </div>
           {%- endfor %}
-        <!-- <h1>Successfully DELETE</h1> -->
       </div>
     {%- endif %}
+    
     <div class="setting-form m-3">
       <form class="p-3" action="{{ url_for('login') }}" method="post">
         {{ csrf_token }}
@@ -40,15 +40,15 @@
           <label for="exampleInputPassword1">كلمة المرور</label>
           <input type="password" name="password" class="form-control"  id="exampleInputPassword1">
         </div>
-        <!-- <div class="form-group form-check">
-          <input type="checkbox" class="form-check-input" id="exampleCheck1">
-          <label class="form-check-label" for="exampleCheck1">Check me out</label>
-        </div> -->
+
         <button type="submit"  class="btn btn-primary">دخول</button>
       </form>
     </div>
     <div style="direction: rtl;">
-      <p class="text-center">اريد التسجيل.. <a href="{{ url_for('signup') }}" class="btn btn-link">تسجيل جديد</a></p>
+      <p class="text-center">اريد التسجيل كـ <a href="{{ url_for('signup') }}" class="btn btn-link"> مستخدم جديد</a></p>
+    </div>
+    <div class="footer text-center text">
+      <footer><a href="https://www.oi.edu.eg/ar/">Obour Institutes</a> &copy; Copyright 2020 </footer>
     </div>
   </div>
 </div>

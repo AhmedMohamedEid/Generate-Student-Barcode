@@ -60,53 +60,28 @@
       {% if request.url_rule.endpoint != 'wizard_setting' %}
       <nav id="sidebar">
 				<div class="p-4 pt-5">
-
-
           <div class="text-center">
-
             <!-- <img class="icon" src="{{  url_for('static', filename='image/icon1.png') }}" width="100px" height="100px" title="Barcode Logo" alt="Barcode Logo"> -->
-            <img class="icon" src="{{ url_for('event_logo', id=2) }}"  title="Barcode Logo" alt="Barcode Logo">
+            <img class="icon" src="{{ url_for('event_logo', id=session['company_id']) }}"  title="Barcode Logo" alt="Barcode Logo">
           </div>
-					<!-- <h5>Categories</h5> -->
 	        <ul class="list-unstyled components mb-5">
-            <li>
-	            <a href="{{ url_for('index') }}" aria-expanded="false" >الصفحة الرئيسية</a>
+            <li {% if request.url_rule.endpoint == 'index' %}class="active"{% endif %}>
+	            <a href="{{ url_for('index') }}"  aria-expanded="false" >الصفحة الرئيسية</a>
 	          </li>
-            <li>
+            <li {% if request.url_rule.endpoint == 'all_student' %}class="active"{% endif %}>
 	            <a href="{{ url_for('all_student') }}" aria-expanded="false" >الطـلاب</a>
 	          </li>
             <li>
 	            <a href="#pageSubmenu1" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">الاعدادات</a>
 	            <ul class="collapse list-unstyled" id="pageSubmenu1">
-                <li><a href="{{ url_for('all_student') }}">الطلاب<span class="fa fa-chevron-left ml-2"></span></a></li>
-                <li><a href="{{ url_for('setting') }}">الاعدادات<span class="fa fa-chevron-left ml-2"></span></a></li>
+                <li><a href="{{ url_for('downloadzipfile') }}">تحميل الملفات<span class="fa fa-chevron-left ml-2"></span></a></li>
+                <li {% if request.url_rule.endpoint == 'setting' %}class="active"{% endif %}><a href="{{ url_for('setting') }}">الاعدادات<span class="fa fa-chevron-left ml-2"></span></a></li>
 
 	            </ul>
 	          </li>
 
 	        </ul>
-					<!-- <div class="mb-5">
-						<h5>Tag Cloud</h5>
-            <div class="tagcloud">
-              <a href="#" class="tag-cloud-link">dish</a>
-              <a href="#" class="tag-cloud-link">menu</a>
-              <a href="#" class="tag-cloud-link">food</a>
-              <a href="#" class="tag-cloud-link">sweet</a>
-              <a href="#" class="tag-cloud-link">tasty</a>
-              <a href="#" class="tag-cloud-link">delicious</a>
-              <a href="#" class="tag-cloud-link">desserts</a>
-              <a href="#" class="tag-cloud-link">drinks</a>
-            </div>
-					</div>
-					<div class="mb-5">
-	        	<h5>Newsletter</h5>
-						<form action="#" class="subscribe-form">
-	            <div class="form-group d-flex">
-	            	<div class="icon"><span class="icon-paper-plane"></span></div>
-	              <input type="text" class="form-control" placeholder="Enter Email Address">
-	            </div>
-	          </form>
-					</div> -->
+
 	      </div>
     	</nav>
       {% endif %}

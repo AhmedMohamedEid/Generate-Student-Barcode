@@ -40,7 +40,7 @@
               <div class="input-select">
                 <!-- <label for="selectboxnum1"></label> -->
                 <select data-trigger="" class="custom-select my-1 mr-sm-2" id="selectboxnum1" name="major_filter">
-                  <option placeholder="الشعبة" value="0">الشعبه</option>
+                  <option placeholder="القسم" value="0">القسم</option>
                   {% for row in majors  %}
                   <option value="{{ row.id }}">{{ row.name }}</option>
                   {% endfor %}
@@ -77,7 +77,7 @@
       <form class="p-3" action="{{ url_for('student_upload_data') }}" method="post" enctype = "multipart/form-data">
         {{ csrf_token }}
         <div class="form-group">
-          <label for="exampleInputmajor3">الشعبة</label>
+          <label for="exampleInputmajor3">القسم</label>
           <select class="form-control" name="major" required id="exampleInputmajor3">
             <option selected>...</option>
             {% for major in majors %}

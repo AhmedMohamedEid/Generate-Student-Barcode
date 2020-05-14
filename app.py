@@ -389,7 +389,7 @@ def users():
         is_admin = request.form.get("is_admin")
         is_user = request.form.get("is_user")
         status = request.form.get("status")
-
+        company_id = request.form.get("company_id")
         is_admin = True if is_admin == "1" else False
 
         is_user = True if is_user == "1" else False
@@ -405,7 +405,7 @@ def users():
 
         check_email = db.session.query(db.exists().where(Users.email == email)).scalar()
         if not check_email:
-            user = Users(name=username,username=username,email=email,password=password,is_super_user=is_super_user, is_admin=is_admin, is_user=is_user, status=status)
+            user = Users(name=username,username=username,email=email,password=password,company_id=company_id,is_super_user=is_super_user, is_admin=is_admin, is_user=is_user, status=status)
             db.session.add(user)
             db.session.commit()
         flash("تم أضافة المستخدم بنجاح!")
@@ -507,7 +507,7 @@ def updateRecords(path, id):
         username = request.form.get("name")
         email = request.form.get("email")
         company_id = request.form.get("company_id")
-        # password = generate_password_hash(request.form.get("password"))
+        new_password = generate_password_hash(request.form.get("password"))
         is_admin = request.form.get("is_admin")
         is_user = request.form.get("is_user")
         status = request.form.get("status")
@@ -526,6 +526,8 @@ def updateRecords(path, id):
         users.company_id = company_id
         users.name = name
         users.email = email
+        if new_password != None:
+            users.password = new_password
         users.is_admin = is_admin
         users.is_user = is_user
         users.status = status
@@ -612,7 +614,9 @@ def student_upload_data():
         students = csv.reader(file)
 
         for ui_code,name,subjects in students:
-            students = Students(name=name,un_id=ui_code,major_id=major,level_id=level,subjects=subjects)
+            if ui_code and name and subjects:
+
+                students = Students(name=name,un_id=ui_code,major_id=major,level_id=level,subjects=subjects)
             db.session.add(students)
         db.session.commit()
         # print(file)
@@ -628,28 +632,10 @@ def all_student():
     majors =  Majors.query.all()
     levels =  Levels.query.all()
     page = request.args.get(get_page_parameter(), type=int, default=1)
-    # print(page)
-    rows = Students.query.all()
-    rowss = {
-        "students":rows,
-    }
-    major_level_dec = []
-    for row in rows:
-        # print(row.major_id.)
-        major =  Majors.query.get(row.major_id)
-        level =  Levels.query.get(row.level_id)
-        major_level_dec.append({
-        "student_id": row.id,
-        "major":major.name,
-        "level": level.name
-        })
-    rowss["data"] = major_level_dec
-    # print("================",rowss)
-        # print(major_level_dec)
-    pagination = Pagination(page=page, css_framework="bootstrap4",total=len(rows), record_name='rows')
-    # print(pagination)
 
-    return render_template("student.html", pagination=pagination ,rows=rowss,major_level=major_level_dec,majors=majors,levels=levels )
+    rows = Students.query.paginate(page=page, per_page=20)
+
+    return render_template("student.html",rows=rows,majors=majors,levels=levels )
 
 # @app.route('/user/<username>')
 # def profile(username):
@@ -662,10 +648,7 @@ def all_student():
 @login_required
 def student(id):
     row = Students.query.get(id)
-    major_id =  Majors.query.get(row.major_id)
-    level_id =  Levels.query.get(row.level_id)
-
-    return render_template("student_data.html",student=row,major=major_id,level=level_id )
+    return render_template("student_data.html",student=row)
 
 
 
@@ -693,39 +676,25 @@ def search():
         major_search = request.form.get('major_filter')
         level_search = request.form.get('level_filter')
 
-        if isinstance(text, int):
-            result = Students.query.filter(Students.un_id == text ).all()
-        elif isinstance(text, str):
-            search = "%{}%".format(text)
-            result = Students.query.filter(Students.name.like(search) ).all()
+        page = request.args.get(get_page_parameter(), type=int, default=1)
+
+        if isinstance(text, str) and len(text) != 0:
+            try:
+                search = "%{}%".format(text)
+                rows = Students.query.filter(Students.un_id.like(int(search))).paginate(page=page, per_page=20)
+            except Exception as e:
+                search = "%{}%".format(text)
+                print(e)
+                rows = Students.query.filter(Students.name.like(search)).paginate(page=page, per_page=20)
 
         if major_search and level_search:
-            result = Students.query.filter(Students.major_id == major_search,Students.level_id == level_search).all()
+            print(major_search)
+            print(level_search)
+            rows = Students.query.filter(Students.major_id == major_search,Students.level_id == level_search).paginate(page=page, per_page=20)
         majors =  Majors.query.all()
         levels =  Levels.query.all()
-        page = request.args.get(get_page_parameter(), type=int, default=1)
-        # print(page)
 
-        rowss = {
-            "students":result,
-        }
-        major_level_dec = []
-        for row in result:
-            # print(row.major_id.)
-            major =  Majors.query.get(row.major_id)
-            level =  Levels.query.get(row.level_id)
-            major_level_dec.append({
-            "student_id": row.id,
-            "major":major.name,
-            "level": level.name
-            })
-        rowss["data"] = major_level_dec
-        # print("================",rowss)
-            # print(major_level_dec)
-        pagination = Pagination(page=page, css_framework="bootstrap4",total=len(result), record_name='rows')
-        # print(pagination)
-
-        return render_template("student.html", pagination=pagination, search_val=text,rows=rowss,major_level=major_level_dec,majors=majors,levels=levels )
+        return render_template("student.html", search_val=text,rows=rows, majors=majors,levels=levels )
 
 
 @app.route("/delete/<path:path>/<int:id>")
@@ -851,7 +820,7 @@ def generate_svg():
         rows = Students.query.filter(Students.image == None).all()
         # rows = db.execute("SELECT * FROM student WHERE barcode_path IS NULL;").fetchall()
         # print(rows)
-        barcode_path = "static/barcode_path"
+        barcode_path = "barcode_path"
         try:
             os.makedirs(barcode_path)
 
@@ -865,7 +834,7 @@ def generate_svg():
 
                 num = "00{}".format(row.un_id)
                 name = row.name
-                print (num)
+                # print (num)
                 EAN = barcode.get_barcode_class('ean8')
                 ean = EAN(u"{}".format(num))
 

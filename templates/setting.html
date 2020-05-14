@@ -143,7 +143,7 @@
 
             <td>
               {% if session["is_super_user"] %}
-              <a href="{{ url_for('deleterecord', path='company', id= row.id) }}" class="btn btn-link btn-sm" ><i class="fa fa-trash-alt"></i></a>
+              <a href="{{ url_for('deleterecord', path='company', id= row.id) }}" onclick="return confirm('Are you sure?')" class="btn btn-link btn-sm" ><i class="fa fa-trash-alt"></i></a>
               {% endif %}
               <a href="{{ url_for('updateRecords', path='company', id= row.id) }}" class="btn btn-link btn-sm" ><i class="fa fa-edit"></i></a>
           </td>
@@ -162,6 +162,17 @@
       <div class="setting-form m-3">
         <form class="p-3" action="{{ url_for('users') }}" method="post">
           {{ csrf_token }}
+
+          <div class="form-group">
+            <label for="exampleInputcompany3">الشركة</label>
+            <select class="form-control" id="exampleInputcompany3" name="company_id">
+              <option value="0">....</option>
+              {% for row in company %}
+              <option value="{{ row.id }}" {% if session["company_id"] == row.id %}selected {% endif %}>{{ row.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
           <div class="form-group">
             <label for="exampleInputname3">الاسم</label>
             <input type="text" class="form-control" name="name" required id="exampleInputname3" aria-describedby="namelHelp">
@@ -208,6 +219,16 @@
               <div class="container">
                 <h2 class="text-center">أضافة مستخدم جديد</h2>
                   {{ csrf_token }}
+
+                  <div class="form-group">
+                    <label for="exampleInputcompany3">الشركة</label>
+                    <select class="form-control" id="exampleInputcompany3" name="company_id">
+                      <option value="0">....</option>
+                      {% for row in company %}
+                      <option value="{{ row.id }}" {% if session["company_id"] == row.id %}selected {% endif %}>{{ row.name }}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
 
                   <div class="form-group">
                     <label for="exampleInputname3">الاسم</label>
@@ -308,7 +329,7 @@
               {% endif %}
             </td>
             <td>
-              <a href="{{ url_for('deleterecord', path='users', id= row.id) }}" class="btn btn-link btn-sm" ><i class="fa fa-trash-alt"></i></a>
+              <a href="{{ url_for('deleterecord', path='users', id= row.id) }}" onclick="return confirm('Are you sure?')" class="btn btn-link btn-sm" ><i class="fa fa-trash-alt"></i></a>
               <a href="{{ url_for('updateRecords', path='users', id= row.id) }}" class="btn btn-link btn-sm" ><i class="fa fa-edit"></i></a>
           </td>
           </tr>
@@ -321,7 +342,7 @@
 {% endif %}
 
   <div class="group">
-    <h3 class="mb-1 text-right">الشعب</h3>
+    <h3 class="mb-1 text-right">الاقسام</h3>
     {% if not majors %}
     <div class="setting-form m-3">
       <form class="p-3" action="{{ url_for('major') }}" method="post">
@@ -351,16 +372,16 @@
           <span onclick="document.getElementById('id02').style.display='none'" class="close" title="Close Modal">&times;</span>
           <form class="modal-content" method="POST" action="{{ url_for('major') }}">
             <div class="container">
-              <h2 class="text-center">أضافة شعبة</h2>
+              <h2 class="text-center">أضافة قسم</h2>
                 {{ csrf_token }}
 
                 <div class="form-group">
-                  <label for="exampleInputname">الاسم</label>
-                  <input type="text" class="form-control" name="name" required id="exampleInputname" aria-describedby="namelHelp">
+                  <label for="exampleInputname08">الاسم</label>
+                  <input type="text" class="form-control" name="name" required id="exampleInputname08" aria-describedby="namelHelp">
                 </div>
                 <div class="form-group">
-                  <label for="exampleInputnotes">ملاحظات</label>
-                  <input type="text" class="form-control" name="notes" id="exampleInputnotes" aria-describedby="namelHelp">
+                  <label for="exampleInputnotes012">ملاحظات</label>
+                  <input type="text" class="form-control" name="notes" id="exampleInputnotes012" aria-describedby="namelHelp">
                 </div>
               <div class="clearfix">
                 <button type="submit"  class="btn btn-info">أضافة</button>
@@ -390,7 +411,7 @@
           <!-- <td></td> -->
           <td>{{ row.notes }}</td>
           <td>
-            <a href="{{ url_for('deleterecord', path='majors', id= row.id) }}" class="btn btn-link btn-sm" ><i class="fa fa-trash-alt"></i></a>
+            <a href="{{ url_for('deleterecord', path='majors', id= row.id) }}" onclick="return confirm('Are you sure?')" class="btn btn-link btn-sm" ><i class="fa fa-trash-alt"></i></a>
             <a href="{{ url_for('updateRecords', path='majors', id= row.id) }}" class="btn btn-link btn-sm" ><i class="fa fa-edit"></i></a>
         </td>
         </tr>
@@ -409,8 +430,8 @@
         <form class="p-3" action="{{ url_for('level') }}" method="post">
           {{ csrf_token }}
           <div class="form-group">
-            <label for="exampleInputName">الاسم</label>
-            <input type="text" class="form-control" name="name" required id="exampleInputName" aria-describedby="namelHelp">
+            <label for="exampleInputName010">الاسم</label>
+            <input type="text" class="form-control" name="name" required id="exampleInputName010" aria-describedby="namelHelp">
             <!-- <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small> -->
           </div>
           <div class="form-group">
@@ -437,8 +458,8 @@
                 {{ csrf_token }}
 
                 <div class="form-group">
-                  <label for="exampleInputname">الاسم</label>
-                  <input type="text" class="form-control" name="name" required id="exampleInputname" aria-describedby="namelHelp">
+                  <label for="exampleInputname011">الاسم</label>
+                  <input type="text" class="form-control" name="name" required id="exampleInputname011" aria-describedby="namelHelp">
                 </div>
                 <div class="form-group">
                   <label for="exampleInputnotes">ملاحظات</label>
@@ -472,7 +493,7 @@
           <td>{{ row.name }}</td>
           <td>{{ row.notes }}</td>
           <td>
-            <a href="{{ url_for('deleterecord', path='levels', id= row.id) }}" class="btn btn-link btn-sm" ><i class="fa fa-trash-alt"></i></a>
+            <a href="{{ url_for('deleterecord', path='levels', id= row.id) }}" onclick="return confirm('Are you sure?')" class="btn btn-link btn-sm" ><i class="fa fa-trash-alt"></i></a>
             <a href="{{ url_for('updateRecords', path='levels', id= row.id) }}" class="btn btn-link btn-sm" ><i class="fa fa-edit"></i></a>
         </td>
         </tr>

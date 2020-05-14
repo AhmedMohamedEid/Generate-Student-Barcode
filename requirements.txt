@@ -7,3 +7,4 @@ Flask-Migrate
 Flask-Script
 flask-wtf
 python-docx
+zipfile36

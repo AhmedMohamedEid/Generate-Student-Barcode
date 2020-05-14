@@ -41,25 +41,7 @@ table ,.setting-form form{
   top: -3.1em;
   right: 15px;
 }
-.toggle-view, .pagination-info{
-  display: -webkit-inline-box;
-}
 
-.pagination-page-info {
-    padding: .6em;
-    padding-left: 0;
-    /* width: 40em; */
-    margin: .5em;
-    margin-left: 0;
-    font-size: 12px;
-}
-.pagination-page-info b {
-    color: black;
-    background: #6aa6ed;
-    padding-left: 2px;
-    padding: .1em .25em;
-    font-size: 150%;
-}
 
 
 .list-unstyled li{
@@ -1011,6 +993,18 @@ hr {
   width: 50%;
 }
 
+/* Pagination  */
+.control-btn{
+  display: -webkit-inline-box;
+  position: absolute;
+  right: 0;
+}
+.paginate-data{
+  display: -webkit-inline-box;
+  position: absolute;
+  left: 0;
+  direction: rtl;
+}
 
 /* bootstrap4 Edit  */
 
@@ -1023,4 +1017,14 @@ h1, h2, h3, h4, h5, .h1, .h2, .h3, .h4, .h5{
 }
 .form-control {
   border: 1px solid #ccc;
+}
+
+.active{
+  background: #f8f9fa;
+  border-radius: 3%;
+  padding-right: 7px;
+  color: #000;
+}
+.active a{
+  color: #000;
 }
