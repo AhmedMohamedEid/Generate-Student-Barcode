@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}
+    ملفات الباركود
+{% endblock %}
+
+{% block body %}
+
+
+
+  <div class="form" style="  margin:auto">
+
+    <div class="p-4 form-title">
+      <h2 class="text-center">تحميل ملف</h2>
+    </div>
+
+    <div class="setting-form m-3">
+      <form class="p-3" action="{{ url_for('gzipfile') }}" method="post">
+        {{ csrf_token }}
+        <div class="form-group">
+          <label for="exampleInputmajor3">القسم</label>
+          <select class="form-control" name="major" required id="exampleInputmajor3">
+            <option selected>...</option>
+            {% for major in majors %}
+            <option value="{{ major.id }}">{{ major.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="exampleInputmajor3">الفرقة</label>
+          <select class="custom-select" name="level" required id="inputGroupSelect02">
+            <option selected>...</option>
+            {% for level in levels %}
+            <option value="{{ level.id }}">{{ level.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary">تحميل</button>
+      </form>
+    </div>
+
+  </div>
+
+{% endblock %}
