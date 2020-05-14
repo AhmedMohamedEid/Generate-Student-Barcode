@@ -1,6 +1,6 @@
 
 import csv
-import os, shutil
+import os, shutil, sys
 
 from flask import Flask, session,send_file,render_template,redirect,flash, request, url_for,jsonify, Response
 from flask_session import Session
@@ -27,6 +27,11 @@ import barcode, random
 from barcode.writer import ImageWriter
 
 from io import BytesIO
+
+if sys.version_info >= (3, 6):
+    import zipfile
+else:
+    import zipfile36 as zipfile
 
 from models import Users,Students, Levels, Majors, Subjects, Company
 
@@ -224,8 +229,15 @@ def wizard_setting(path):
         flash("تم الاضافة بنجاح")
         return redirect(url_for('wizard_setting', path="users"))
     if path == "company":
-
-        return render_template('wizard_setting.html', company=path)
+        company = Company.query.all()
+        if company:
+            users = Users.query.all()
+            if users:
+                return redirect("/login")
+            else:
+                return render_template('wizard_setting.html',companys_user=company, users='users')
+        else:
+            return render_template('wizard_setting.html', company=path)
 
     elif path == "users" and request.method == "POST" :
         username = request.form.get("name")
@@ -234,7 +246,7 @@ def wizard_setting(path):
         is_admin = request.form.get("is_admin")
         is_user = request.form.get("is_user")
         status = request.form.get("status")
-
+        company_id = request.form.get("company_id")
         is_admin = True if is_admin == "1" else False
 
         is_user = True if is_user == "1" else False
@@ -250,7 +262,7 @@ def wizard_setting(path):
 
         check_email = db.session.query(db.exists().where(Users.email == email)).scalar()
         if not check_email:
-            user = Users(name=username,username=username,email=email,password=password,is_super_user=is_super_user, is_admin=is_admin, is_user=is_user, status=status)
+            user = Users(name=username,username=username,email=email,password=password,company_id=company_id,is_super_user=is_super_user, is_admin=is_admin, is_user=is_user, status=status)
             db.session.add(user)
             db.session.commit()
         flash("تم أضافة المستخدم بنجاح!")
@@ -258,15 +270,19 @@ def wizard_setting(path):
     elif path == "users":
 
         company = Company.query.all()
-        if company:
-            return render_template('wizard_setting.html', companys_user=company, users='users')
+        if company :
+            users = Users.query.all()
+            if users:
+                return redirect("/login")
+            else:
+                return render_template('wizard_setting.html',companys_user=company, users='users')
         else:
             return render_template('wizard_setting.html', company="company")
 
 
 @app.route('/login', methods=('GET', 'POST'))
 def login():
-
+    company = Company.query.filter().first()
     if request.method == "POST":
         email = request.form.get("username")
         password = request.form.get("password")
@@ -300,12 +316,13 @@ def login():
                 return redirect("/login")
         else:
             flash("Please Check your Email or password")
-            return render_template("login.html")
-        return render_template("login.html")
+            return render_template("login.html", company=company)
+        return render_template("login.html", company=company)
     else:
-        company = Company.query.all()
+        # company = Company.query.filter().first()
         if company:
-            return render_template('login.html')
+            print(company)
+            return render_template('login.html', company=company)
         else:
             return redirect(url_for('wizard_setting', path="company"))
 
