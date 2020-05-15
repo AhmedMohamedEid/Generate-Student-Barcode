@@ -103,3 +103,7 @@ window.onclick = function(event) {
     modal.style.display = "none";
   }
 }
+
+function checkDelete(){
+    return confirm('Are you sure to Delete?');
+}
